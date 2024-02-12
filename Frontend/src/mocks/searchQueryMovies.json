@@ -1,0 +1,74 @@
+[
+    {
+        "id": 866398,
+        "adult": false,
+        "genres": [
+            "Action",
+            "Thriller"
+        ],
+        "title": "The Beekeeper",
+        "originalTitle": "The Beekeeper",
+        "releaseDate": "2024-01-10",
+        "image": "https://image.tmdb.org/t/p/w500/mlHDJE9sE3quNRr6bVULfOrIU7S.jpg",
+        "overview": "One man’s campaign for vengeance takes on national stakes after he is revealed to be a former operative of a powerful and clandestine organization known as Beekeepers.",
+        "voteAverage": 7.616,
+        "voteCount": 43,
+        "popularity": 786.863,
+        "originalLanguage": "en"
+    },
+    {
+        "id": 1029575,
+        "adult": false,
+        "genres": [
+            "Action",
+            "Comedy"
+        ],
+        "title": "The Family Plan",
+        "originalTitle": "The Family Plan",
+        "releaseDate": "2023-12-14",
+        "image": "https://image.tmdb.org/t/p/w500/a6syn9qcU4a54Lmi3JoIr1XvhFU.jpg",
+        "overview": "Dan Morgan is many things: a devoted husband, a loving father, a celebrated car salesman. He's also a former assassin. And when his past catches up to his present, he's forced to take his unsuspecting family on a road trip unlike any other.",
+        "voteAverage": 7.375,
+        "voteCount": 691,
+        "popularity": 624.114,
+        "originalLanguage": "en"
+    },
+    {
+        "id": 695721,
+        "adult": false,
+        "genres": [
+            "Action",
+            "Drama",
+            "Science Fiction"
+        ],
+        "title": "The Hunger Games: The Ballad of Songbirds & Snakes",
+        "originalTitle": "The Hunger Games: The Ballad of Songbirds & Snakes",
+        "releaseDate": "2023-11-15",
+        "image": "https://image.tmdb.org/t/p/w500/mBaXZ95R2OxueZhvQbcEWy2DqyO.jpg",
+        "overview": "64 years before he becomes the tyrannical president of Panem, Coriolanus Snow sees a chance for a change in fortunes when he mentors Lucy Gray Baird, the female tribute from District 12.",
+        "voteAverage": 7.23,
+        "voteCount": 1458,
+        "popularity": 677.391,
+        "originalLanguage": "en"
+    },
+    {
+        "id": 502356,
+        "adult": false,
+        "genres": [
+            "Adventure",
+            "Animation",
+            "Comedy",
+            "Family",
+            "Fantasy"
+        ],
+        "title": "The Super Mario Bros. Movie",
+        "originalTitle": "The Super Mario Bros. Movie",
+        "releaseDate": "2023-04-05",
+        "image": "https://image.tmdb.org/t/p/w500/qNBAXBIQlnOThrVvA6mA2B5ggV6.jpg",
+        "overview": "While working underground to fix a water main, Brooklyn plumbers—and brothers—Mario and Luigi are transported down a mysterious pipe and wander into a magical new world. But when the brothers are separated, Mario embarks on an epic quest to find Luigi.",
+        "voteAverage": 7.705,
+        "voteCount": 7761,
+        "popularity": 464.942,
+        "originalLanguage": "en"
+    }
+]

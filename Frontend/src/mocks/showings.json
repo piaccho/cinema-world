@@ -1,0 +1,86 @@
+[
+    {
+        "showingId": "65a59906626bda162994e8fd",
+        "movie": {
+            "movieId": "65a591debb663b455dfdd245",
+            "categories": [
+                {
+                    "categoryId": "65a3fa2aab0c80254c34d7a1",
+                    "name": "Action"
+                },
+                {
+                    "categoryId": "65a3fa2aab0c80254c34d7aa",
+                    "name": "Comedy"
+                }
+            ],
+            "title": "The Family Plan",
+            "image": "https://image.tmdb.org/t/p/w500/a6syn9qcU4a54Lmi3JoIr1XvhFU.jpg",
+            "length": 93
+        },
+        "hall": {
+            "hallId": "65a596cf7b15ff716a8f3405",
+            "seatsNumber": 100,
+            "hallNumber": 8
+        },
+        "datetime": "2024-02-19T09:00:00",
+        "freeSeats": 100,
+        "type": "Dubbing",
+        "price": 35
+    },
+    {
+        "showingId": "65a59906626bda162994e8fd",
+        "movie": {
+            "movieId": "65a591debb663b455dfdd245",
+            "categories": [
+                {
+                    "categoryId": "65a3fa2aab0c80254c34d7a1",
+                    "name": "Action"
+                },
+                {
+                    "categoryId": "65a3fa2aab0c80254c34d7aa",
+                    "name": "Horror"
+                }
+            ],
+            "title": "Godzilla Minus One",
+            "image": "https://image.tmdb.org/t/p/w500/hkxxMIGaiCTmrEArK7J56JTKUlB.jpg",
+            "length": 93
+        },
+        "hall": {
+            "hallId": "65a596cf7b15ff716a8f3405",
+            "seatsNumber": 100,
+            "hallNumber": 8
+        },
+        "datetime": "2024-02-19T11:00:00",
+        "freeSeats": 100,
+        "type": "Dubbing",
+        "price": 35
+    },
+    {
+        "showingId": "65a59906626bda162994e8fd",
+        "movie": {
+            "movieId": "65a591debb663b455dfdd245",
+            "categories": [
+                {
+                    "categoryId": "65a3fa2aab0c80254c34d7a1",
+                    "name": "Action"
+                },
+                {
+                    "categoryId": "65a3fa2aab0c80254c34d7aa",
+                    "name": "Comedy"
+                }
+            ],
+            "title": "The Family Plan",
+            "image": "https://image.tmdb.org/t/p/w500/a6syn9qcU4a54Lmi3JoIr1XvhFU.jpg",
+            "length": 93
+        },
+        "hall": {
+            "hallId": "65a596cf7b15ff716a8f3405",
+            "seatsNumber": 100,
+            "hallNumber": 8
+        },
+        "datetime": "2024-02-19T15:00:00",
+        "freeSeats": 100,
+        "type": "Dubbing",
+        "price": 35
+    },
+]
