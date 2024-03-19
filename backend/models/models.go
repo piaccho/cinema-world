@@ -52,8 +52,17 @@ type Showing struct {
 }
 
 type User struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty"`
-	Username string             `bson:"username" validate:"required,min=3,max=20"`
-	Email    string             `bson:"email" validate:"required,email"`
-	Password string             `bson:"password" validate:"required,min=8"`
+	ID           primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Type         string             `json:"type" bson:"type"`
+	Email        string             `json:"email" bson:"email"`
+	Password     string             `json:"password" bson:"password"`
+	Firstname    string             `json:"firstname" bson:"firstname"`
+	Lastname     string             `json:"lastname" bson:"lastname"`
+	ToWatch      []MovieRef         `json:"to_watch" bson:"to_watch"`
+	Reservations []Reservation      `json:"reservations" bson:"reservations"`
+}
+
+type Reservation struct {
+	Showing Showing `json:"showing" bson:"showing"`
+	Seat    int     `json:"seat" bson:"seat"`
 }
