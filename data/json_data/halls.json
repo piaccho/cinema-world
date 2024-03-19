@@ -1,0 +1,9 @@
+{"_id":{"$oid":"65a596cf7b15ff716a8f3405"},"seatsNumber":100,"hallNumber":8}
+{"_id":{"$oid":"65a596cf7b15ff716a8f3402"},"seatsNumber":100,"hallNumber":5}
+{"_id":{"$oid":"65a596cf7b15ff716a8f33ff"},"seatsNumber":100,"hallNumber":2}
+{"_id":{"$oid":"65a596cf7b15ff716a8f3400"},"seatsNumber":100,"hallNumber":3}
+{"_id":{"$oid":"65a596cf7b15ff716a8f3403"},"seatsNumber":100,"hallNumber":6}
+{"_id":{"$oid":"65a596cf7b15ff716a8f33fe"},"seatsNumber":100,"hallNumber":1}
+{"_id":{"$oid":"65a596cf7b15ff716a8f3401"},"seatsNumber":100,"hallNumber":4}
+{"_id":{"$oid":"65a596cf7b15ff716a8f3404"},"seatsNumber":100,"hallNumber":7}
+{"_id":{"$oid":"65a596cf7b15ff716a8f3406"},"seatsNumber":100,"hallNumber":9}
