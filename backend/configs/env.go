@@ -11,3 +11,5 @@ func EnvMongoURI() string {
 func EnvMongoDatabaseName() string { return os.Getenv("MONGODB_NAME") }
 
 func EnvJWTSecret() string { return os.Getenv("JWT_SECRET") }
+
+func EnvPort() string { return os.Getenv("PORT") }

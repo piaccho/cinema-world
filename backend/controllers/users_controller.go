@@ -24,13 +24,13 @@ func CreateUser() gin.HandlerFunc {
 
 		// validate the request body
 		if err := c.BindJSON(&user); err != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		// use the validator library to validate required fields
 		if validationErr := utils.Validator.Struct(&user); validationErr != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
@@ -48,11 +48,11 @@ func CreateUser() gin.HandlerFunc {
 
 		result, err := userCollection.InsertOne(ctx, newUser)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		c.JSON(http.StatusCreated, models.ResponseModel{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		c.JSON(http.StatusCreated, models.Response{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
 }
 
@@ -68,14 +68,14 @@ func GetUserById() gin.HandlerFunc {
 		err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				c.JSON(http.StatusNotFound, models.ResponseModel{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "No user found with the provided ID"}})
+				c.JSON(http.StatusNotFound, models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "No user found with the provided ID"}})
 				return
 			}
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		c.JSON(http.StatusOK, models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": user}})
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": user}})
 	}
 }
 
@@ -89,13 +89,13 @@ func UpdateUser() gin.HandlerFunc {
 
 		// validate the request body
 		if err := c.BindJSON(&user); err != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		// use the validator library to validate required fields
 		if validationErr := utils.Validator.Struct(&user); validationErr != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
@@ -103,7 +103,7 @@ func UpdateUser() gin.HandlerFunc {
 		update := bson.M{"type": user.Type, "email": user.Email, "password": hashedPassword, "firstname": user.Firstname, "lastname": user.Lastname}
 		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -112,12 +112,12 @@ func UpdateUser() gin.HandlerFunc {
 		if result.MatchedCount == 1 {
 			err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedUser)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 		}
 
-		c.JSON(http.StatusOK, models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedUser}})
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedUser}})
 	}
 }
 
@@ -131,19 +131,19 @@ func DeleteUser() gin.HandlerFunc {
 
 		result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		if result.DeletedCount < 1 {
 			c.JSON(http.StatusNotFound,
-				models.ResponseModel{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
+				models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
 			)
 			return
 		}
 
 		c.JSON(http.StatusOK,
-			models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!"}},
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!"}},
 		)
 	}
 }
@@ -156,7 +156,7 @@ func GetAllUsers() gin.HandlerFunc {
 
 		results, err := userCollection.Find(ctx, bson.M{})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -164,21 +164,21 @@ func GetAllUsers() gin.HandlerFunc {
 		defer func(results *mongo.Cursor, ctx context.Context) {
 			err := results.Close(ctx)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			}
 		}(results, ctx)
 
 		for results.Next(ctx) {
 			var singleUser models.User
 			if err = results.Decode(&singleUser); err != nil {
-				c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			}
 
 			users = append(users, singleUser)
 		}
 
 		c.JSON(http.StatusOK,
-			models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": users}},
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": users}},
 		)
 	}
 }

@@ -18,6 +18,5 @@ func ShowingRoute(router *gin.RouterGroup) {
 	router.GET("/movie/:movieId", controllers.GetShowingsByMovieId())
 	router.GET("/hall/:hallId", controllers.GetShowingsByHallId())
 	// Custom operations
-	router.GET("/generateForDays/:daysNumber", controllers.GenerateShowingsForNextDays())
-
+	router.GET("/generate/forNextDays/:daysNumber", controllers.GenerateShowingsForNextDays())
 }

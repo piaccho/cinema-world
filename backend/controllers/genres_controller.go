@@ -26,7 +26,7 @@ func GetAllGenres() gin.HandlerFunc {
 
 		results, err := genreCollection.Find(ctx, bson.M{})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -34,21 +34,21 @@ func GetAllGenres() gin.HandlerFunc {
 		defer func(results *mongo.Cursor, ctx context.Context) {
 			err := results.Close(ctx)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			}
 		}(results, ctx)
 
 		for results.Next(ctx) {
 			var singleGenre models.Genre
 			if err = results.Decode(&singleGenre); err != nil {
-				c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			}
 
 			genres = append(genres, singleGenre)
 		}
 
 		c.JSON(http.StatusOK,
-			models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": genres}},
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": genres}},
 		)
 	}
 }
@@ -61,13 +61,13 @@ func CreateGenre() gin.HandlerFunc {
 
 		// validate the request body
 		if err := c.BindJSON(&genre); err != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		// use the validator library to validate required fields
 		if validationErr := utils.Validator.Struct(&genre); validationErr != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
@@ -78,11 +78,11 @@ func CreateGenre() gin.HandlerFunc {
 		// Insert the new genre into the database
 		result, err := genreCollection.InsertOne(ctx, newGenre)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		c.JSON(http.StatusCreated, models.ResponseModel{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		c.JSON(http.StatusCreated, models.Response{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
 }
 
@@ -98,14 +98,14 @@ func GetGenreById() gin.HandlerFunc {
 		err := genreCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&genre)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				c.JSON(http.StatusNotFound, models.ResponseModel{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "No genre found with the provided ID"}})
+				c.JSON(http.StatusNotFound, models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "No genre found with the provided ID"}})
 				return
 			}
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		c.JSON(http.StatusOK, models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": genre}})
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": genre}})
 	}
 }
 
@@ -119,13 +119,13 @@ func UpdateGenre() gin.HandlerFunc {
 
 		// validate the request body
 		if err := c.BindJSON(&genre); err != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		// use the validator library to validate required fields
 		if validationErr := utils.Validator.Struct(&genre); validationErr != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
@@ -137,7 +137,7 @@ func UpdateGenre() gin.HandlerFunc {
 		}
 		result, err := genreCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -146,12 +146,12 @@ func UpdateGenre() gin.HandlerFunc {
 		if result.MatchedCount == 1 {
 			err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedGenre)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 		}
 
-		c.JSON(http.StatusOK, models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedGenre}})
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedGenre}})
 	}
 }
 
@@ -165,10 +165,10 @@ func DeleteGenre() gin.HandlerFunc {
 		// delete the genre from the database
 		_, err := genreCollection.DeleteOne(ctx, bson.M{"_id": objId})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		c.JSON(http.StatusOK, models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Genre deleted successfully"}})
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Genre deleted successfully"}})
 	}
 }

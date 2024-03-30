@@ -17,7 +17,7 @@ func LoginUser() gin.HandlerFunc {
 
 		// validate the request body
 		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -25,25 +25,25 @@ func LoginUser() gin.HandlerFunc {
 		userCollection := configs.GetCollection("users")
 		err := userCollection.FindOne(context.TODO(), bson.M{"email": req.Email}).Decode(&user)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, models.ResponseModel{Status: http.StatusUnauthorized, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Invalid email or password"}})
+			c.JSON(http.StatusUnauthorized, models.Response{Status: http.StatusUnauthorized, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Invalid email or password"}})
 			return
 		}
 
 		// compare the password
 		err = utils.CompareHashedPassword(user.Password, req.Password)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, models.ResponseModel{Status: http.StatusUnauthorized, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Invalid email or password"}})
+			c.JSON(http.StatusUnauthorized, models.Response{Status: http.StatusUnauthorized, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Invalid email or password"}})
 			return
 		}
 
 		// generate the token
 		tokenString, err := utils.CreateToken(user.Email)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Error while generating the token"}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Error while generating the token"}})
 			return
 		}
 
-		c.JSON(http.StatusOK, models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"token": tokenString}})
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"token": tokenString}})
 	}
 }
 
@@ -54,7 +54,7 @@ func RegisterUser() gin.HandlerFunc {
 
 		// validate the request body
 		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -62,14 +62,14 @@ func RegisterUser() gin.HandlerFunc {
 		userCollection := configs.GetCollection("users")
 		err := userCollection.FindOne(context.TODO(), bson.M{"email": req.Email}).Decode(&user)
 		if err == nil {
-			c.JSON(http.StatusConflict, models.ResponseModel{Status: http.StatusConflict, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "User already exists"}})
+			c.JSON(http.StatusConflict, models.Response{Status: http.StatusConflict, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "User already exists"}})
 			return
 		}
 
 		// hash the password
 		hashedPassword, err := utils.HashPassword(req.Password)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Error while hashing the password"}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Error while hashing the password"}})
 			return
 		}
 
@@ -83,11 +83,11 @@ func RegisterUser() gin.HandlerFunc {
 		}
 		_, err = userCollection.InsertOne(context.TODO(), newUser)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Error while creating the user"}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Error while creating the user"}})
 			return
 		}
 
 		// return success message
-		c.JSON(http.StatusOK, models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"description": "User successfully registered"}})
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"description": "User successfully registered"}})
 	}
 }

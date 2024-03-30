@@ -12,12 +12,13 @@ func MovieRoute(router *gin.RouterGroup) {
 	router.GET("/upcoming/:quantity", controllers.GetMovies("upcoming"))
 	router.GET("/genres/:name", controllers.GetMovies("genres"))
 	router.GET("/search/:query", controllers.GetMovies("search"))
+	router.GET("/ref", controllers.GetMoviesRefs())
 	router.POST("/", controllers.CreateMovie())
 	router.GET("/:id", controllers.GetMovieById())
 	router.PUT("/:id", controllers.UpdateMovie())
 	router.DELETE("/:id", controllers.DeleteMovie())
 	// Routes for reviews
-	router.POST("/:id/review", controllers.CreateReview())
-	router.GET("/:id/review", controllers.GetReviews())
-	router.DELETE("/:id/review/:reviewId", controllers.DeleteReview())
+	//router.POST("/:id/review", controllers.CreateReview())
+	//router.GET("/:id/review", controllers.GetReviews())
+	//router.DELETE("/:id/review/:reviewId", controllers.DeleteReview())
 }

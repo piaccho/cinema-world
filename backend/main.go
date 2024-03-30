@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"os"
 	"piaccho/cinema-api/configs"
 
 	"github.com/gin-gonic/gin"
@@ -56,5 +55,5 @@ func main() {
 	routes.UserRoute(router.Group("/api/users"))
 
 	// Start the server
-	router.Run(":" + os.Getenv("PORT"))
+	router.Run(":" + configs.EnvPort())
 }

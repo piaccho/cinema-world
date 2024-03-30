@@ -20,8 +20,9 @@ import (
 var moviesCollection *mongo.Collection = configs.GetCollection("movies")
 
 // DefaultQuantity Default number of documents to return
-var DefaultQuantity int64 = int64(20)
+const DefaultQuantity int64 = int64(20)
 
+// GetMovies returns a list of movies based on the type - popular, upcoming, genres, search
 func GetMovies(getType string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var filter bson.M
@@ -77,7 +78,7 @@ func GetMovies(getType string) gin.HandlerFunc {
 		// Find all documents in the collection
 		results, err := moviesCollection.Find(ctx, filter, findOptions)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -85,21 +86,21 @@ func GetMovies(getType string) gin.HandlerFunc {
 		defer func(results *mongo.Cursor, ctx context.Context) {
 			err := results.Close(ctx)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			}
 		}(results, ctx)
 
 		for results.Next(ctx) {
 			var singleMovie models.Movie
 			if err = results.Decode(&singleMovie); err != nil {
-				c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			}
 
 			movies = append(movies, singleMovie)
 		}
 
 		c.JSON(http.StatusOK,
-			models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": movies}},
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": movies}},
 		)
 	}
 }
@@ -112,19 +113,19 @@ func CreateMovie() gin.HandlerFunc {
 
 		// validate the request body
 		if err := c.BindJSON(&movie); err != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		// Insert a single document
 		result, err := moviesCollection.InsertOne(ctx, movie)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		c.JSON(http.StatusOK,
-			models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": result.InsertedID}},
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": result.InsertedID}},
 		)
 	}
 }
@@ -142,15 +143,15 @@ func GetMovieById() gin.HandlerFunc {
 		err := moviesCollection.FindOne(ctx, bson.M{"_id": movieId}).Decode(&movie)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
-				c.JSON(http.StatusNotFound, models.ResponseModel{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "No movie found with the provided ID"}})
+				c.JSON(http.StatusNotFound, models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "No movie found with the provided ID"}})
 				return
 			}
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		c.JSON(http.StatusOK,
-			models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": movie}},
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": movie}},
 		)
 	}
 }
@@ -166,14 +167,14 @@ func UpdateMovie() gin.HandlerFunc {
 
 		// validate the request body
 		if err := c.BindJSON(&movie); err != nil {
-			c.JSON(http.StatusBadRequest, models.ResponseModel{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		// Update a single document
 		result, err := moviesCollection.UpdateOne(ctx, bson.M{"_id": movieId}, bson.M{"$set": movie})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -182,13 +183,13 @@ func UpdateMovie() gin.HandlerFunc {
 		if result.MatchedCount == 1 {
 			err := moviesCollection.FindOne(ctx, bson.M{"_id": movieId}).Decode(&updatedMovie)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 		}
 
 		c.JSON(http.StatusOK,
-			models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedMovie}},
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedMovie}},
 		)
 	}
 }
@@ -204,19 +205,61 @@ func DeleteMovie() gin.HandlerFunc {
 		// Delete a single document
 		result, err := moviesCollection.DeleteOne(ctx, bson.M{"_id": movieId})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ResponseModel{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		if result.DeletedCount < 1 {
 			c.JSON(http.StatusNotFound,
-				models.ResponseModel{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Movie with specified ID not found!"}},
+				models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Movie with specified ID not found!"}},
 			)
 			return
 		}
 
 		c.JSON(http.StatusOK,
-			models.ResponseModel{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Movie successfully deleted!"}},
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Movie successfully deleted!"}},
+		)
+	}
+}
+
+func GetMoviesRefs() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var movies []models.MovieRef
+		defer cancel()
+
+		// Find all documents in the collection
+		results, err := moviesCollection.Find(ctx, bson.M{})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		// reading from the db in an optimal way
+		defer func(results *mongo.Cursor, ctx context.Context) {
+			err := results.Close(ctx)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			}
+		}(results, ctx)
+
+		for results.Next(ctx) {
+			var singleMovie models.Movie
+			if err = results.Decode(&singleMovie); err != nil {
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			}
+
+			movies = append(movies, models.MovieRef{
+				MovieID:    singleMovie.ID,
+				Categories: singleMovie.Genres,
+				Title:      singleMovie.Title,
+				Image:      singleMovie.Image,
+				Length:     singleMovie.Length,
+			})
+		}
+
+		c.JSON(http.StatusOK,
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": movies}},
 		)
 	}
 }
