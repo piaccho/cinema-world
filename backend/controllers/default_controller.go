@@ -1,12 +1,11 @@
-package handlers
+package controllers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-// Hello route
+// GetHello Hello route
 func GetHello() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Query("name") != "" {
@@ -19,7 +18,7 @@ func GetHello() gin.HandlerFunc {
 	}
 }
 
-// Goodbye with given name route
+// GetGoodbye Goodbye with given name route
 func GetGoodbye() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		name := c.Param("name")

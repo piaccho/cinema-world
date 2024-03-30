@@ -4,10 +4,10 @@ import (
 	"context"
 	"log"
 	"os"
+	"piaccho/cinema-api/configs"
 
 	"github.com/gin-gonic/gin"
 
-	"piaccho/cinema-api/config"
 	"piaccho/cinema-api/routes"
 )
 
@@ -28,35 +28,33 @@ func CORSMiddleware() gin.HandlerFunc {
 }
 
 func main() {
-	// Connect to MongoDB
-	client, err := config.GetMongoClient()
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer client.Disconnect(context.Background())
-
-	// Create a new router
 	router := gin.Default()
-
-	// Setup CORS middleware
 	router.Use(CORSMiddleware())
 
+	// Connect to MongoDB
+	err := configs.GetMongoClient()
+	if err != nil {
+		log.Fatalf("Failed to connect to MongoDB: %v", err)
+	}
+	defer func() {
+		if err = configs.DB.Disconnect(context.Background()); err != nil {
+			log.Fatalf("Failed to disconnect from MongoDB: %v", err)
+		}
+	}()
+
+	// Initialize indexes
+	configs.InitializeIndexes()
+
 	// Setup routes
-
-	defaultRoutes := router.Group("/api")
-	routes.SetupDefaultRoutes(defaultRoutes)
-
-	genresRoutes := router.Group("/api/genres")
-	routes.SetupGenresRoutes(genresRoutes, client)
-
-	moviesRoutes := router.Group("/api/movies")
-	routes.SetupMoviesRoutes(moviesRoutes, client)
-
-	showingsRoutes := router.Group("/api/showings")
-	routes.SetupShowingsRoutes(showingsRoutes, client)
+	routes.DefaultRoute(router.Group("/api"))
+	routes.AuthRoute(router.Group("/api/auth"))
+	routes.GenreRoute(router.Group("/api/genres"))
+	routes.HallRoute(router.Group("/api/halls"))
+	routes.ShowingRoute(router.Group("/api/showings"))
+	// TODO
+	routes.MovieRoute(router.Group("/api/movies"))
+	routes.UserRoute(router.Group("/api/users"))
 
 	// Start the server
-
 	router.Run(":" + os.Getenv("PORT"))
-
 }

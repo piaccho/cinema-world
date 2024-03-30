@@ -1,9 +1,60 @@
-{"_id":{"$oid":"65a596cf7b15ff716a8f3405"},"seatsNumber":100,"hallNumber":8}
-{"_id":{"$oid":"65a596cf7b15ff716a8f3402"},"seatsNumber":100,"hallNumber":5}
-{"_id":{"$oid":"65a596cf7b15ff716a8f33ff"},"seatsNumber":100,"hallNumber":2}
-{"_id":{"$oid":"65a596cf7b15ff716a8f3400"},"seatsNumber":100,"hallNumber":3}
-{"_id":{"$oid":"65a596cf7b15ff716a8f3403"},"seatsNumber":100,"hallNumber":6}
-{"_id":{"$oid":"65a596cf7b15ff716a8f33fe"},"seatsNumber":100,"hallNumber":1}
-{"_id":{"$oid":"65a596cf7b15ff716a8f3401"},"seatsNumber":100,"hallNumber":4}
-{"_id":{"$oid":"65a596cf7b15ff716a8f3404"},"seatsNumber":100,"hallNumber":7}
-{"_id":{"$oid":"65a596cf7b15ff716a8f3406"},"seatsNumber":100,"hallNumber":9}
+{
+"_id": {"$oid": "617de90c4483693455aa8d00"},
+"name": "Hall 1",
+"rows": 10,
+"seats_per_row": 15
+}
+{
+"_id": {"$oid": "617de90c4483693455aa8d01"},
+"name": "Hall 2",
+"rows": 8,
+"seats_per_row": 12
+}
+{
+"_id": {"$oid": "617de90c4483693455aa8d02"},
+"name": "Hall 3",
+"rows": 12,
+"seats_per_row": 18
+}
+{
+"_id": {"$oid": "617de90c4483693455aa8d03"},
+"name": "Hall 4",
+"rows": 9,
+"seats_per_row": 14
+}
+{
+"_id": {"$oid": "617de90c4483693455aa8d04"},
+"name": "Hall 5",
+"rows": 11,
+"seats_per_row": 16
+}
+{
+"_id": {"$oid": "617de90c4483693455aa8d05"},
+"name": "Hall 6",
+"rows": 10,
+"seats_per_row": 20
+}
+{
+"_id": {"$oid": "617de90c4483693455aa8d06"},
+"name": "Hall 7",
+"rows": 8,
+"seats_per_row": 15
+}
+{
+"_id": {"$oid": "617de90c4483693455aa8d07"},
+"name": "Hall 8",
+"rows": 9,
+"seats_per_row": 17
+}
+{
+"_id": {"$oid": "617de90c4483693455aa8d08"},
+"name": "Hall 9",
+"rows": 10,
+"seats_per_row": 18
+}
+{
+"_id": {"$oid": "617de90c4483693455aa8d09"},
+"name": "Hall 10",
+"rows": 7,
+"seats_per_row": 13
+}
