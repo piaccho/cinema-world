@@ -1,1 +1,1 @@
-{"_id":{"$oid":"66073ec904f5c8c8cc246baa"},"type":"Admin","email":"admin@example.com","password":"12341234","firstname":"John","lastname":"Travolta","to_watch":null,"reservations":null}
+{"_id":{"$oid":"66073ec904f5c8c8cc246baa"},"type":"Admin","email":"admin@example.com","password":"12341234","firstname":"John","lastname":"Travolta","to_watch":[]}

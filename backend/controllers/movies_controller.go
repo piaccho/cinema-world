@@ -137,7 +137,7 @@ func GetMovieById() gin.HandlerFunc {
 		defer cancel()
 
 		// Get movie id
-		movieId, _ := primitive.ObjectIDFromHex(c.Param("id"))
+		movieId, _ := primitive.ObjectIDFromHex(c.Param("movieId"))
 
 		// Find a single document
 		err := moviesCollection.FindOne(ctx, bson.M{"_id": movieId}).Decode(&movie)
@@ -163,7 +163,7 @@ func UpdateMovie() gin.HandlerFunc {
 		defer cancel()
 
 		// Get movie id
-		movieId, _ := primitive.ObjectIDFromHex(c.Param("id"))
+		movieId, _ := primitive.ObjectIDFromHex(c.Param("movieId"))
 
 		// validate the request body
 		if err := c.BindJSON(&movie); err != nil {
@@ -200,7 +200,7 @@ func DeleteMovie() gin.HandlerFunc {
 		defer cancel()
 
 		// Get movie id
-		movieId, _ := primitive.ObjectIDFromHex(c.Param("id"))
+		movieId, _ := primitive.ObjectIDFromHex(c.Param("movieId"))
 
 		// Delete a single document
 		result, err := moviesCollection.DeleteOne(ctx, bson.M{"_id": movieId})
@@ -250,11 +250,11 @@ func GetMoviesRefs() gin.HandlerFunc {
 			}
 
 			movies = append(movies, models.MovieRef{
-				MovieID:    singleMovie.ID,
-				Categories: singleMovie.Genres,
-				Title:      singleMovie.Title,
-				Image:      singleMovie.Image,
-				Length:     singleMovie.Length,
+				Id:     singleMovie.Id,
+				Genres: singleMovie.Genres,
+				Title:  singleMovie.Title,
+				Image:  singleMovie.Image,
+				Length: singleMovie.Length,
 			})
 		}
 

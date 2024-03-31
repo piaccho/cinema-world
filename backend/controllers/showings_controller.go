@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"io"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"piaccho/cinema-api/configs"
 	"piaccho/cinema-api/models"
 	"piaccho/cinema-api/utils"
+	"reflect"
 	"strconv"
 	"time"
 
@@ -57,47 +59,6 @@ func GetAllShowings() gin.HandlerFunc {
 	}
 }
 
-func CreateShowing() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var showing models.Showing
-		defer cancel()
-
-		// validate the request body
-		if err := c.BindJSON(&showing); err != nil {
-			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-			return
-		}
-
-		// use the validator library to validate required fields
-		if validationErr := utils.Validator.Struct(&showing); validationErr != nil {
-			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
-			return
-		}
-
-		newShowing := models.Showing{
-			Id:              primitive.NewObjectID(),
-			MovieShowingRef: showing.MovieShowingRef,
-			HallId:          showing.HallId,
-			StartTime:       showing.StartTime,
-			EndTime:         showing.EndTime,
-			AvailableSeats:  showing.AvailableSeats,
-			BookedSeats:     showing.BookedSeats,
-			PricePerTicket:  showing.PricePerTicket,
-			AudioType:       showing.AudioType,
-			VideoType:       showing.VideoType,
-		}
-
-		result, err := showingCollection.InsertOne(ctx, newShowing)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-			return
-		}
-
-		c.JSON(http.StatusCreated, models.Response{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
-	}
-}
-
 func GetShowingById() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -121,6 +82,48 @@ func GetShowingById() gin.HandlerFunc {
 	}
 }
 
+func CreateShowing() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var showing models.Showing
+		defer cancel()
+
+		// validate the request body
+		if err := c.BindJSON(&showing); err != nil {
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		// pass through the validator
+		err, errDescription := validateShowing(showing, ctx)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": errDescription}})
+			return
+		}
+
+		newShowing := models.Showing{
+			Id:              primitive.NewObjectID(),
+			MovieShowingRef: showing.MovieShowingRef,
+			Hall:            showing.Hall,
+			StartTime:       showing.StartTime,
+			EndTime:         showing.EndTime,
+			AvailableSeats:  showing.AvailableSeats,
+			BookedSeats:     showing.BookedSeats,
+			PricePerTicket:  showing.PricePerTicket,
+			AudioType:       showing.AudioType,
+			VideoType:       showing.VideoType,
+		}
+
+		result, err := showingCollection.InsertOne(ctx, newShowing)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		c.JSON(http.StatusCreated, models.Response{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+	}
+}
+
 func UpdateShowing() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -131,17 +134,17 @@ func UpdateShowing() gin.HandlerFunc {
 
 		// validate the request body
 		if err := c.BindJSON(&showing); err != nil {
-			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to bind JSON"}})
 			return
 		}
 
-		// use the validator library to validate required fields
-		if validationErr := utils.Validator.Struct(&showing); validationErr != nil {
-			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+		// pass through the validator
+		if err, errDescription := validateShowing(showing, ctx); errDescription != "" {
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": errDescription}})
 			return
 		}
 
-		update := bson.M{"movie_id": showing.MovieShowingRef, "hall_id": showing.HallId, "start_time": showing.StartTime, "end_time": showing.EndTime, "available_seats": showing.AvailableSeats, "booked_seats": showing.BookedSeats, "price_per_ticket": showing.PricePerTicket, "audio_type": showing.AudioType, "video_type": showing.VideoType}
+		update := bson.M{"movie_id": showing.MovieShowingRef, "hall": showing.Hall, "start_time": showing.StartTime, "end_time": showing.EndTime, "available_seats": showing.AvailableSeats, "booked_seats": showing.BookedSeats, "price_per_ticket": showing.PricePerTicket, "audio_type": showing.AudioType, "video_type": showing.VideoType}
 		result, err := showingCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -160,6 +163,50 @@ func UpdateShowing() gin.HandlerFunc {
 
 		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedShowing}})
 	}
+}
+
+func validateShowing(showing models.Showing, ctx context.Context) (error, string) {
+
+	// use the validator library to validate required fields
+	if validationErr := utils.Validator.Struct(&showing); validationErr != nil {
+		return validationErr, "error caught Validator library"
+	}
+	// check if hall exists and if its name is correct one with the provided ID
+	hallCollection := configs.GetCollection("halls")
+	var hall models.Hall
+	err := hallCollection.FindOne(ctx, bson.M{"_id": showing.Hall.Id}).Decode(&hall)
+	if err != nil {
+		return err, "Hall with the provided ID does not exist"
+	}
+	if !reflect.DeepEqual(hall, showing.Hall) {
+		return errors.New("not Deep Equal"), "Hall document is not identical with the provided one"
+	}
+	// check if movie exists and if its name is correct one with the provided ID
+	movieCollection := configs.GetCollection("movies")
+	var movie models.MovieRef
+	err = movieCollection.FindOne(ctx, bson.M{"_id": showing.MovieShowingRef.Id}).Decode(&movie)
+	if err != nil {
+		return err, "Movie with the provided ID does not exist"
+	}
+	if !reflect.DeepEqual(movie, showing.MovieShowingRef) {
+		return errors.New("not Deep Equal"), "Movie document is not identical with the provided one"
+	}
+
+	if showing.StartTime.After(showing.EndTime) ||
+		showing.StartTime.Equal(showing.EndTime) ||
+		showing.StartTime.Before(time.Now()) ||
+		showing.EndTime.Before(time.Now()) ||
+		showing.StartTime.Equal(time.Now()) ||
+		showing.EndTime.Equal(time.Now()) {
+		return errors.New("incorrect time range"), "Incorrect time range"
+	}
+	// check if showing available seats are correct
+	if showing.AvailableSeats != showing.Hall.Rows*showing.Hall.SeatsPerRow ||
+		showing.BookedSeats >= showing.AvailableSeats {
+		return errors.New("incorrect number of seats"), "Incorrect number of seats"
+	}
+
+	return nil, ""
 }
 
 func DeleteShowing() gin.HandlerFunc {
@@ -191,53 +238,79 @@ func DeleteShowing() gin.HandlerFunc {
 
 func GetShowingsByDate() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Parse datetime from the URL parameter
-		datetimeStr := c.Param("datetime")
-		datetime, err := time.Parse(time.RFC3339, datetimeStr)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		dateParam := c.Param("datetime")
+		datetime, err := time.Parse("2006-01-02", dateParam)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid datetime format. Please use RFC3339."})
+			c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to parse datetime"}})
 			return
 		}
 
-		// Find all documents in the showingCollection that have the given datetime
-		cursor, err := showingCollection.Find(context.Background(), bson.D{{"datetime", datetime}})
+		startOfDay := time.Date(datetime.Year(), datetime.Month(), datetime.Day(), 0, 0, 0, 0, datetime.Location())
+		endOfDay := startOfDay.Add(24 * time.Hour)
+		filter := bson.M{"start_time": bson.M{"$gte": startOfDay, "$lt": endOfDay}}
+
+		cursor, err := showingCollection.Find(ctx, filter)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				c.JSON(http.StatusNotFound, models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "No showing found with the provided date"}})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to find showing with the provided date"}})
 			return
 		}
+		defer func(cursor *mongo.Cursor, ctx context.Context) {
+			err := cursor.Close(ctx)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to close cursor"}})
+			}
+		}(cursor, ctx)
 
-		// Decode the documents
+		// Decode the found showings
 		var showings []models.Showing
-		if err = cursor.All(context.Background(), &showings); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if err = cursor.All(ctx, &showings); err != nil {
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to decode showings"}})
 			return
 		}
 
-		// Return the documents as JSON
-		c.JSON(http.StatusOK, showings)
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"info": "Fetched " + strconv.Itoa(len(showings)) + " showings documents", "data": showings}})
 	}
 }
 
 func GetShowingsByMovieId() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		movieId := c.Param("movieId")
+		defer cancel()
 
-		// Find all documents in the showingCollection that contain the movie with the given id
-		cursor, err := showingCollection.Find(context.Background(), bson.D{{"movie._id", movieId}})
+		objId, _ := primitive.ObjectIDFromHex(movieId)
+
+		cursor, err := showingCollection.Find(ctx, bson.M{"movie._id": objId})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				c.JSON(http.StatusNotFound, models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "No showing found with the provided movie ID"}})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to find showing with the provided movie ID"}})
 			return
 		}
+		defer func(cursor *mongo.Cursor, ctx context.Context) {
+			err := cursor.Close(ctx)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to close cursor"}})
+			}
+		}(cursor, ctx)
 
-		// Decode the documents
+		// Decode the found showings
 		var showings []models.Showing
-		if err = cursor.All(context.Background(), &showings); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if err = cursor.All(ctx, &showings); err != nil {
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to decode showings"}})
 			return
 		}
 
-		// Return the documents as JSON
-		c.JSON(http.StatusOK, showings)
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"info": "Fetched " + strconv.Itoa(len(showings)) + " showings documents", "data": showings}})
 	}
 }
 
@@ -247,32 +320,46 @@ func GetShowingsByHallId() gin.HandlerFunc {
 		hallId := c.Param("hallId")
 		defer cancel()
 
-		// Find all documents in the showingCollection that contain the hall with the given id
-		cursor, err := showingCollection.Find(ctx, bson.D{{"hall._id", hallId}})
+		objId, _ := primitive.ObjectIDFromHex(hallId)
+
+		cursor, err := showingCollection.Find(ctx, bson.M{"hall._id": objId})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				c.JSON(http.StatusNotFound, models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "No showing found with the provided hall ID"}})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to find showing with the provided hall ID"}})
 			return
 		}
+		defer func(cursor *mongo.Cursor, ctx context.Context) {
+			err := cursor.Close(ctx)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to close cursor"}})
+			}
+		}(cursor, ctx)
 
-		// Decode the documents
+		// Decode the found showings
 		var showings []models.Showing
 		if err = cursor.All(ctx, &showings); err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to decode halls"}})
 			return
 		}
 
-		// Return the documents as JSON
-		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": showings}})
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"info": "Fetched " + strconv.Itoa(len(showings)) + " halls documents", "data": showings}})
 	}
 }
 
-func GenerateShowingsForNextDays() gin.HandlerFunc {
+func GenerateShowingsForDays() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		const MinTimeHour = 8
-		const MaxTimeHour = 22
+		const MinTimeHour = 14 // cinema opening time - 2 PM
+		const MaxTimeHour = 22 // cinema closing time - 10 PM
 		const HourMinutes = 60
 		const QuarterMinutes = 15
 		const QuarterRound = 14
+		const BreakMinutes = 15
+		const MovieBatchSize = 4
+
+		var createdShowingsNumber = 0
 
 		daysNum, err := strconv.Atoi(c.Param("daysNumber"))
 		if err != nil || daysNum < 1 {
@@ -297,58 +384,40 @@ func GenerateShowingsForNextDays() gin.HandlerFunc {
 		// Start generating showings from the current day
 		startDay := time.Now()
 
-		// Start a new session for the transaction
-		session, err := configs.DB.StartSession()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"description": "Failed to start session", "data": err.Error()}})
-			return
-		}
-		defer session.EndSession(context.Background())
-
-		// Start the transaction
-		err = session.StartTransaction()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"description": "Failed to start transaction", "data": err.Error()}})
-			return
-		}
-
-		// Create a SessionContext
-		ctx := mongo.NewSessionContext(context.Background(), session)
-
+		fmt.Println("\nStart generating showings for next " + strconv.Itoa(daysNum) + " days...\n")
 		for d := 0; d < daysNum; d++ {
+			// Movies chosen by window slide of movies array, moved each day by one movie
+			var moviesBatch = allMoviesRefs[d : MovieBatchSize+d]
+			fmt.Println("Day:", d, "\n")
 			for _, hall := range allHalls {
-				initTime := MinTimeHour
-				for initTime < MaxTimeHour {
-					randomMovie := allMoviesRefs[rand.Intn(len(allMoviesRefs))]
-					startDate := time.Date(startDay.Year(), startDay.Month(), startDay.Day()+d, initTime, 0, 0, 0, time.UTC)
-					endDate := startDate.Add(time.Minute * time.Duration(randomMovie.Length))
+				fmt.Println("\t", hall.Name, ":")
+				var initTime = time.Date(startDay.Year(), startDay.Month(), startDay.Day()+d, MinTimeHour, 0, 0, 0, time.UTC)
+				var finalTime = time.Date(startDay.Year(), startDay.Month(), startDay.Day()+d, MaxTimeHour, 0, 0, 0, time.UTC)
+				for initTime.Before(finalTime) {
+					randomMovie := moviesBatch[rand.Intn(len(moviesBatch))]
+					startDate := initTime
+					showingLength := (initTime.Minute() + randomMovie.Length + QuarterRound) / QuarterMinutes * QuarterMinutes // Round to the nearest quarter-hour
+					endDate := startDate.Add(time.Minute * time.Duration(showingLength))
 
 					// Create showing in hall at time
-					err := createShowingInHallAtTime(ctx, randomMovie, hall, startDate, endDate)
+					err := createShowingInHallAtTime(c, randomMovie, hall, startDate, endDate)
 					if err != nil {
-						// Abort the transaction in case of an error
-						_ = session.AbortTransaction(context.Background())
 						c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"description": "Failed to create showing in hall at time", "data": err.Error()}})
 						return
 					}
+					createdShowingsNumber++
 
-					initTime = (initTime + randomMovie.Length + QuarterRound) / QuarterMinutes * QuarterMinutes // Round to the nearest quarter-hour
-
-					if initTime >= HourMinutes {
-						initTime = initTime % HourMinutes
-					}
+					initTime = endDate.Add(time.Minute * time.Duration(BreakMinutes))
+					fmt.Println(
+						"Showing from:",
+						strconv.Itoa(startDate.Hour())+":"+strconv.Itoa(startDate.Minute()),
+						"to:",
+						strconv.Itoa(endDate.Hour())+":"+strconv.Itoa(endDate.Minute()))
 				}
 			}
 		}
 
-		// Commit the transaction
-		err = session.CommitTransaction(context.Background())
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"description": "Failed to commit transaction", "data": err.Error()}})
-			return
-		}
-
-		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Showings successfully generated"}})
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"info": "Created " + strconv.Itoa(createdShowingsNumber) + " showings", "data": "Showings successfully generated"}})
 	}
 }
 
@@ -428,12 +497,11 @@ func getAllHalls() ([]models.Hall, error) {
 	return halls, nil
 }
 
-func createShowingInHallAtTime(ctx mongo.SessionContext, movie models.MovieRef, hall models.Hall, startDate, endDate time.Time) error {
+func createShowingInHallAtTime(ctx context.Context, movie models.MovieRef, hall models.Hall, startDate, endDate time.Time) error {
 	var audioTypes = []string{"Dubbing", "Subtitles", "VoiceOver"}
 	var videoTypes = []string{"2D", "3D"}
+	var prices = []float64{7.00, 8.00, 10.00, 12.00}
 	const InitBookedSeatsNumber = 0
-	const MinTicketPrice = 5.00
-	const MaxTicketPrice = 10.00
 
 	// Random audio and video type
 	audioType := audioTypes[rand.Intn(len(audioTypes))]
@@ -443,19 +511,32 @@ func createShowingInHallAtTime(ctx mongo.SessionContext, movie models.MovieRef, 
 	availableSeats := hall.Rows * hall.SeatsPerRow
 
 	// Zero booked seats
-
 	bookedSeats := InitBookedSeatsNumber
 
 	// Random ticket price from 5.00 to 10.00
-	pricePerTicket := MinTicketPrice + rand.Float64()*(MaxTicketPrice-MinTicketPrice)
+	pricePerTicket := prices[rand.Intn(len(prices))]
+
+	// Create [][]Seat array of hall.Rows x hall.SeatsPerRow size with Seat struct
+	seats := make([][]models.Seat, hall.Rows)
+	for i := range seats {
+		seats[i] = make([]models.Seat, hall.SeatsPerRow)
+		for j := range seats[i] {
+			seats[i][j] = models.Seat{
+				RowNumber:  i + 1,
+				SeatNumber: j + 1,
+				IsReserved: false,
+			}
+		}
+	}
 
 	// Create new showing
 	showing := models.Showing{
 		Id:              primitive.NewObjectID(),
 		MovieShowingRef: movie,
-		HallId:          hall.Id,
+		Hall:            hall,
 		StartTime:       startDate,
 		EndTime:         endDate,
+		Seats:           seats,
 		AvailableSeats:  availableSeats,
 		BookedSeats:     bookedSeats,
 		PricePerTicket:  pricePerTicket,

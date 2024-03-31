@@ -50,8 +50,9 @@ func main() {
 	routes.GenreRoute(router.Group("/api/genres"))
 	routes.HallRoute(router.Group("/api/halls"))
 	routes.ShowingRoute(router.Group("/api/showings"))
-	// TODO
+	routes.ReservationRoute(router.Group("/api/reservations"))
 	routes.MovieRoute(router.Group("/api/movies"))
+	// Todo: WishList
 	routes.UserRoute(router.Group("/api/users"))
 
 	// Start the server
