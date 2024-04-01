@@ -25,7 +25,7 @@ export interface BasicMovie {
 }
 
 export interface Genre {
-    id: number;
+    _id: number;
     name: string;
 }
 

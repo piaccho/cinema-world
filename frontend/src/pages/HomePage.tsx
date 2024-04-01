@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography } from '@mui/material';
+import { CircularProgress, Container, Typography } from '@mui/material';
 import { Movie } from '../types';
 import ApiService from '../ApiService';
 import Carousel from '../components/Carousel';
@@ -7,18 +7,46 @@ import MovieItem from '../components/MovieItem';
 
 const HomePage: React.FC = () => {
     const [popularMovies, setPopularMovies] = useState<Movie[]>([]);
+    const [errorPopular, setErrorPopular] = useState<string | null>(null);
+    const [loadingPopular, setLoadingPopular] = useState<boolean>(false);
+
     const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
+    const [errorUpcoming, setErrorUpcoming] = useState<string | null>(null);
+    const [loadingUpcoming, setLoadingUpcoming] = useState<boolean>(false);
+
     const apiService = new ApiService();
 
     useEffect(() => {
         const fetchPopularMovies = async () => {
-            const movies = await apiService.getPopularMovies();
-            setPopularMovies(movies);
+            setLoadingPopular(true);
+            try {
+                const fetchedPopularMovies = await apiService.getPopularMovies();
+                if (Array.isArray(fetchedPopularMovies)) {
+                    setPopularMovies(fetchedPopularMovies);
+                } else {
+                    setErrorPopular('Invalid data format');
+                }
+            } catch (err) {
+                setErrorPopular('Failed to fetch genres');
+            } finally {
+                setLoadingPopular(false);
+            }
         };
         
         const fetchUpcomingMovies = async () => {
-            const movies = await apiService.getUpcomingMovies();
-            setUpcomingMovies(movies);
+            setLoadingUpcoming(true);
+            try {
+                const fetchedUpcomingMovies = await apiService.getUpcomingMovies();
+                if (Array.isArray(fetchedUpcomingMovies)) {
+                    setUpcomingMovies(fetchedUpcomingMovies);
+                } else {
+                    setErrorUpcoming('Invalid data format');
+                }
+            } catch (err) {
+                setErrorUpcoming('Failed to fetch genres');
+            } finally {
+                setLoadingUpcoming(false);
+            }
         };
         
         fetchPopularMovies();
@@ -36,11 +64,18 @@ const HomePage: React.FC = () => {
             >
                 Popular Movies
             </Typography>
-            <Carousel
-                elements={popularMovies.map((movie) => (
-                    <MovieItem key={`popular-${movie._id}`} movie={movie} />
-                ))} 
-            />
+            {loadingPopular ? (
+                <CircularProgress color='info'/>
+            ) : errorPopular ? (
+                <div>Error: {errorPopular}</div>
+            ) : (
+                <Carousel
+                    elements={popularMovies.map((movie) => (
+                        <MovieItem key={`popular-${movie._id}`} movie={movie} />
+                    ))}
+                />
+                )
+            }
             <Typography 
                 variant="h5" 
                 color="initial" 
@@ -48,11 +83,18 @@ const HomePage: React.FC = () => {
                 mb={2}
                 sx={{ fontWeight: 'bold', color: 'primary.light' }}
             >Upcoming Movies</Typography>
-            <Carousel
-                elements={upcomingMovies.map((movie) => (
-                    <MovieItem key={`upcoming-${movie._id}`} movie={movie} />
-                ))} 
-            />
+            {loadingUpcoming ? (
+                <CircularProgress color='info' />
+            ) : errorUpcoming ? (
+                <div>Error: {errorUpcoming}</div>
+            ) : (
+                <Carousel
+                    elements={upcomingMovies.map((movie) => (
+                        <MovieItem key={`upcoming-${movie._id}`} movie={movie} />
+                    ))}
+                />
+            )
+            }
         </Container>
     );
 }

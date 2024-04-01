@@ -4,6 +4,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import { useNavigate } from 'react-router-dom';
 import { Box, IconButton } from '@mui/material';
+import { useStore } from '../store';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -38,17 +39,26 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const SearchBar: React.FC = () => {
-    const [searchQuery, setSearchQuery] = useState('');
+    const [inputSearchQuery, setInputSearchQuery] = useState<string | null>('');
+    const searchQuery = useStore((state) => state.searchQuery);
+    const setSearchQuery = useStore((state) => state.setSearchQuery);
     const navigate = useNavigate();
 
-    const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter' && searchQuery !== '') {
+    const action = () => {
+        if (inputSearchQuery !== null) {
+            setSearchQuery(inputSearchQuery);
             navigate(`/movies/search/${searchQuery}`);
+        }
+    }
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter' && searchQuery !== null) {
+           action();
         }
     };
     const handleClick = () => {
         if (searchQuery !== '') {
-            navigate(`/movies/search/${searchQuery}`);
+           action();
         }
     };
 
@@ -59,12 +69,17 @@ const SearchBar: React.FC = () => {
                 <StyledInputBase
                     placeholder="Search movie…"
                     inputProps={{ 'aria-label': 'search' }}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyDown={handleSearch}
+                    value={inputSearchQuery}
+                    onChange={(e) => setInputSearchQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
                 />
             </Search>
-            <IconButton onClick={handleClick} size="large" aria-label="search" color="inherit">
+            <IconButton 
+                onClick={handleClick} 
+                size="large" 
+                aria-label="search" 
+                color="inherit"
+            >
                 <SearchIcon />
             </IconButton>
         </Box>

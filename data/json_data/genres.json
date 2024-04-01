@@ -1,19 +1,20 @@
-{"_id":{"$oid":"659ea9fd7164c501318c5c23"},"name":"Crime"}
-{"_id":{"$oid":"659ea9fd7164c501318c5c24"},"name":"Drama"}
-{"_id":{"$oid":"65a651df6d7b1f183eb768c9"},"name":"Action"}
-{"_id":{"$oid":"65a651df6d7b1f183eb768ca"},"name":"Adventure"}
-{"_id":{"$oid":"65a651df6d7b1f183eb768cb"},"name":"Animation"}
-{"_id":{"$oid":"65a651df6d7b1f183eb768cc"},"name":"Comedy"}
+{"_id":{"$oid":"65a3fa2aab0c80254c34d7a1"},"name":"Action"}
+{"_id":{"$oid":"65a3fa2aab0c80254c34d7a2"},"name":"Adventure"}
+{"_id":{"$oid":"65a3fa2aab0c80254c34d7a3"},"name":"Animation"}
+{"_id":{"$oid":"65a3fa2aab0c80254c34d7a4"},"name":"Science Fiction"}
+{"_id":{"$oid":"65a3fa2dab0c80254c34d7ca"},"name":"Crime"}
+{"_id":{"$oid":"65a3fa2aab0c80254c34d7a6"},"name":"Drama"}
+{"_id":{"$oid":"65a3fa2dab0c80254c34d7cb"},"name":"Western"}
+{"_id":{"$oid":"65a3fa2aab0c80254c34d7ad"},"name":"Mystery"}
+{"_id":{"$oid":"65a3fa2aab0c80254c34d7a7"},"name":"Thriller"}
+{"_id":{"$oid":"65a3fa2aab0c80254c34d7aa"},"name":"Comedy"}
+{"_id":{"$oid":"65a3fa2bab0c80254c34d7b2"},"name":"Family"}
+{"_id":{"$oid":"65a3fa2bab0c80254c34d7b4"},"name":"Fantasy"}
+{"_id":{"$oid":"65a3fa2bab0c80254c34d7b6"},"name":"Horror"}
+{"_id":{"$oid":"65a3fa2bab0c80254c34d7af"},"name":"War"}
 {"_id":{"$oid":"65a651df6d7b1f183eb768cd"},"name":"Documentary"}
-{"_id":{"$oid":"65a651e06d7b1f183eb768ce"},"name":"Family"}
-{"_id":{"$oid":"65a651e06d7b1f183eb768cf"},"name":"Fantasy"}
 {"_id":{"$oid":"65a651e06d7b1f183eb768d0"},"name":"History"}
-{"_id":{"$oid":"65a651e06d7b1f183eb768d1"},"name":"Horror"}
 {"_id":{"$oid":"65a651e06d7b1f183eb768d2"},"name":"Music"}
-{"_id":{"$oid":"65a651e06d7b1f183eb768d3"},"name":"Mystery"}
 {"_id":{"$oid":"65a651e06d7b1f183eb768d4"},"name":"Romance"}
-{"_id":{"$oid":"65a651e06d7b1f183eb768d5"},"name":"Science Fiction"}
 {"_id":{"$oid":"65a651e06d7b1f183eb768d6"},"name":"TV Movie"}
-{"_id":{"$oid":"65a651e06d7b1f183eb768d7"},"name":"Thriller"}
-{"_id":{"$oid":"65a651e06d7b1f183eb768d8"},"name":"War"}
-{"_id":{"$oid":"65a651e06d7b1f183eb768d9"},"name":"Western"}
+

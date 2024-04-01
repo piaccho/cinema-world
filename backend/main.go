@@ -52,7 +52,6 @@ func main() {
 	routes.ShowingRoute(router.Group("/api/showings"))
 	routes.ReservationRoute(router.Group("/api/reservations"))
 	routes.MovieRoute(router.Group("/api/movies"))
-	// Todo: WishList
 	routes.UserRoute(router.Group("/api/users"))
 
 	// Start the server

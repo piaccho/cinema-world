@@ -3,6 +3,11 @@ import { AppBar, Box, Button, Divider, IconButton, Toolbar, Typography, useTheme
 import SearchBar from "./SearchBar";
 import Logo from '../assets/logo_light.svg';
 import { Link } from "react-router-dom";
+import React from "react";
+
+const navOptions = {
+    'Offer': '/', 'Genres': '/genres' , 'Repertoires': '/repertoires'
+};
 
 export default function Header() {
     const theme = useTheme();
@@ -24,17 +29,16 @@ export default function Header() {
                 <AppBar position="static" style={{ backgroundColor: theme.palette.secondary.main, color: theme.palette.primary.contrastText }}>
                     <Toolbar>
                         <Box display="flex" justifyContent="center" width="100%" fontSize="2rem" sx={{ gap: "20px" }}>
-                            <Divider orientation="vertical" flexItem />
-                            <Button component={Link} to="/">
-                                <Typography variant="h6" sx={{fontWeight: 'bold'}}>
-                                    Offer
-                                </Typography>
-                            </Button>
-                            <Divider orientation="vertical" flexItem />
-                            <Button component={Link} to="/genres"><Typography variant="h6" sx={{fontWeight: 'bold'}}>Genres</Typography></Button>
-                            <Divider orientation="vertical" flexItem />
-                            <Button component={Link} to="/repertoires"><Typography variant="h6" sx={{fontWeight: 'bold'}}>Repertoires</Typography></Button>
-                            <Divider orientation="vertical" flexItem />
+                            {Object.entries(navOptions).map(([key, value]) => (
+                                <React.Fragment key={key}>
+                                    <Divider orientation="vertical" flexItem />
+                                    <Button component={Link} to={value}>
+                                        <Typography variant="h6" sx={{ fontWeight: 'bold' }} style={{ color: theme.palette.primary.contrastText }}>
+                                            {key}
+                                        </Typography>
+                                    </Button>
+                                </React.Fragment>
+                            ))}
                         </Box>
                     </Toolbar>
                 </AppBar>

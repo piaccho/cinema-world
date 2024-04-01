@@ -1,27 +1,45 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Container, Box } from '@mui/material';
+import { Typography, Button, Container, Box, CircularProgress } from '@mui/material';
 import { Genre } from '../types';
 import ApiService from '../ApiService';
 import { Link } from 'react-router-dom';
-
+import { useStore } from '../store';
 
 const ChooseGenrePage: React.FC = () => {
     const [genres, setGenres] = useState<Genre[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
     const apiService = new ApiService();
 
+    const setGenreId = useStore((state) => state.setGenreId);
+    const setGenreName = useStore((state) => state.setGenreName);
+
+
     useEffect(() => {
-        const fetchGenres = async () => {
-            const genres = await apiService.getGenres();
-            setGenres(genres);
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const fetchedGenres = await apiService.getAllGenres();
+                if (Array.isArray(fetchedGenres)) {
+                    setGenres(fetchedGenres);
+                } else {
+                    setError('Invalid data format');
+                }
+            } catch (err) {
+                setError('Failed to fetch genres');
+            } finally {
+                setLoading(false);
+            }
         };
-        fetchGenres();
+
+        fetchData();
     }, []);
 
     return (
-        <Container 
-        
+        <Container
             component="main"
-            sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText'}}>
+            sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText' }}
+        >
             <Box
                 my={5}
                 sx={{
@@ -30,21 +48,28 @@ const ChooseGenrePage: React.FC = () => {
                     alignItems: 'center',
                 }}
             >
-                <Typography variant="h4" my={3} sx={{fontWeight: 'bold'}}>
+                <Typography variant="h4" my={3} sx={{ fontWeight: 'bold' }}>
                     Choose a Genre
                 </Typography>
-                {genres.map((genre, index) => (
-                    <Button 
-                        key={index}
-                        component={Link} 
-                        to={`/movies/genres/${genre.name}`} 
-                        variant="contained" 
-                        color="primary" 
-                        sx={{ width: '100%' }}
-                    >
-                        {genre.name}
-                    </Button>
-                ))}
+                {loading ? (
+                    <CircularProgress color='info'/>
+                ) : error ? (
+                    <div>Error: {error}</div>
+                ) : (
+                    genres.map((genre, index) => (
+                        <Button
+                            key={index}
+                            component={Link}
+                            to={`/movies/genres/${genre.name}`}
+                            onClick={() => { setGenreId(genre._id); setGenreName(genre.name) }}
+                            variant="contained"
+                            color="primary"
+                            sx={{ width: '100%' }}
+                        >
+                            {genre.name}
+                        </Button>
+                    ))
+                )}
             </Box>
         </Container>
     );

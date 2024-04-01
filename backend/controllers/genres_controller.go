@@ -109,6 +109,27 @@ func GetGenreById() gin.HandlerFunc {
 	}
 }
 
+func GetGenreByName() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		genreName := c.Param("genreName")
+		var genre models.Genre
+		defer cancel()
+
+		err := genreCollection.FindOne(ctx, bson.M{"name": genreName}).Decode(&genre)
+		if err != nil {
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				c.JSON(http.StatusNotFound, models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "No genre found with the provided ID"}})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": genre}})
+	}
+}
+
 func UpdateGenre() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

@@ -1,16 +1,19 @@
 import axios, { AxiosInstance } from 'axios';
 import { API } from './config/config';
 import { Genre, Movie, Showing } from './types';
-// import { getPopularMoviesMock, getUpcomingMoviesMock, getGenresMock, getMoviesBySearchQueryMock, getMoviesByGenreMock, getShowingListsByDateMock, getShowingListsByMovieIdMock } from './util/mockServices';
 
+type ApiResponse = {
+    status: number;
+    message: string;
+    data: { [key: string]: any };
+};
 
-// Klasa serwisu API
 export default class ApiService {
     private api: AxiosInstance;
 
     constructor() {
         const baseURL = import.meta.env.VITE_API_URI || 'http://localhost:8080/api';
-        
+
         this.api = axios.create({
             baseURL: baseURL,
             headers: {
@@ -19,62 +22,73 @@ export default class ApiService {
         });
     }
 
+    async getAllGenres(): Promise<Genre[]> {
+        const URL = `${API.CRUD_GENRES}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
+    }
+
+    async getGenreByName(genreName: string): Promise<Genre[]> {
+        const URL = `${API.GET_GENRE_BY_NAME}${genreName}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
+    }
+
+    async getMovieByTitle(title: string): Promise<Genre[]> {
+        const URL = `${API.GET_MOVIE_BY_TITLE}${title}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
+    }
+
     async getPopularMovies(): Promise<Movie[]> {
-        const response = await this.api.get<Movie[]>(API.GET_POPULAR_MOVIES);
-        return response.data;
-        // return getPopularMoviesMock();
+        const URL = `${API.GET_POPULAR_MOVIES}${API.DEFAULT_ENTRIES_NUMBER}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
     }
 
     async getUpcomingMovies(): Promise<Movie[]> {
-        const response = await this.api.get<Movie[]>(API.GET_UPCOMING_MOVIES);
-        return response.data;
-        // return getUpcomingMoviesMock();
-    }
-
-    async getGenres(): Promise<Genre[]> {
-        const response = await this.api.get<Genre[]>(API.GET_GENRES);
-        return response.data;
-        // return getGenresMock();
+        const URL = `${API.GET_UPCOMING_MOVIES}${API.DEFAULT_ENTRIES_NUMBER}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
     }
 
     async getMoviesBySearchQuery(query: string): Promise<Movie[]> {
-        const response = await this.api.get<Movie[]>(`${API.GET_MOVIES_BY_SEARCH_QUERY}${query}`);
-        console.log(`got movies by search query: ${query}`, response.data);
-        return response.data;
-        // return getMoviesBySearchQueryMock(query);
-    } 
+        const URL = `${API.GET_MOVIES_BY_SEARCH_QUERY}${query}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
+    }
 
-    async getMoviesByGenre(genreName: string): Promise<Movie[]> {
-        const response = await this.api.get<Movie[]>(`${API.GET_MOVIES_BY_GENRE}${genreName}`);
-        return response.data;
-        // return getMoviesByGenreMock(genreName);
+    async getMoviesByGenreId(genreId: number): Promise<Movie[]> {
+        const URL = `${API.GET_MOVIES_BY_GENRE_ID}${genreId}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
+    }
+
+    async getMoviesByGenreName(genreName: string): Promise<Movie[]> {
+        const URL = `${API.GET_MOVIES_BY_GENRE_NAME}${genreName}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
     }
 
     async getShowingListsByDate(date: string): Promise<Showing[]> {
-        const response = await this.api.get<Showing[]>(`${API.GET_SHOWINGS_BY_DATE}${date}`);
-        console.log(`Got repertoire for ${date}`, response.data);
-        return response.data;
-        // return getShowingListsByDateMock(date);
+        const URL = `${API.GET_SHOWINGS_BY_DATE}${date}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
     }
 
     async getShowingListsByMovieId(movieId: number): Promise<Showing[]> {
-        const response = await this.api.get<Showing[]>(`${API.GET_SHOWINGS_BY_MOVIEID}${movieId}`);
-        console.log(`Got ${response.data.length} repertoires`, response.data);
-        return response.data;
-        // return getShowingListsByMovieIdMock(movieId);
+        const URL = `${API.GET_SHOWINGS_BY_MOVIEID}${movieId}`;
+        const response = await this.api.get<ApiResponse>(URL);
+        console.log(`GET ${URL}`, response.data);
+        return response.data.data.data || [];
     }
-
-    // async createPost(post: Post): Promise<Post> {
-    //     const response = await this.api.post<Post>('/posts', post);
-    //     return response.data;
-    // }
-
-    // async updatePost(id: number, post: Partial<Post>): Promise<Post> {
-    //     const response = await this.api.put<Post>(`/posts/${id}`, post);
-    //     return response.data;
-    // }
-
-    // async deletePost(id: number): Promise<void> {
-    //     await this.api.delete(`/posts/${id}`);
-    // }
 }

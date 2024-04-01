@@ -1,50 +1,64 @@
+import { PaletteMode } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { orange, red, grey, green } from '@mui/material/colors';
 
+const getDesignTokens = (mode: PaletteMode) => ({
+  palette: {
+    mode,
+    ...(mode === 'light'
+      ? {
+        // palette values for light mode
+        primary: {
+          main: "#5E2775",
+          light: "#835D8F",
+          dark: "#3A015C",
+          contrastText: "#FFFFFF"
+        },
+        text: {
+          primary: "rgba(0, 0, 0, 0.87)",
+          secondary: "rgba(0, 0, 0, 0.6)",
+          disabled: "rgba(0, 0, 0, 0.38)",
+        },
+      }
+      : {
+        // palette values for dark mode
+        primary: {
+          main: "#461261",
+          light: "#6D3F7F",
+          dark: "#2D0843",
+          contrastText: "rgba(0, 0, 0, 0.87)"
+        },
+        text: {
+          primary: "#fff",
+          secondary: "rgba(255, 255, 255, 0.7)",
+          disabled: "rgba(255, 255, 255, 0.5)",
+        },
+        
+      }),
+  },
+  typography: {
+    fontFamily: [
+      'Noto Sans',
+      'Lora',
+      'Arial',
+      'sans-serif'
+    ].join(','),
+  },
+});
 
-
-// A custom theme for this app
 const theme = createTheme({
-  // palette 1
-      // primary: {
-      //   main: "#2F4460",
-      //   light: "#5175A4",
-      //   dark: "#141D29",
-      //   contrastText: "#FFFFFF"
-      // },
-      // secondary: {
-      //   main: "#BFCDE0",
-      //   light: "#FEFCFD",
-      //   dark: "#7593BD",
-      //   contrastText: "#000000"
-      // },
- 
-  // palette 2
-      // primary: {
-      //   main: "#634832",
-      //   light: "#967259",
-      //   dark: "#38220f",
-      //   contrastText: "#FFFFFF"
-      // },
-      // secondary: {
-      //   main: "#dbc1ac",
-      //   light: "#ece0d1",
-      //   dark: "#967259",
-      //   contrastText: "#000000"
-      // },
-
   palette: {
     primary: {
-      main: "#634832", 
-      light: "#967259",
-      dark: "#38220f",
+      main: "#5E2775",
+      light: "#835D8F",
+      dark: "#3A015C",
       contrastText: "#FFFFFF"
     },
     secondary: {
-      main: "#dbc1ac",
-      light: "#ece0d1",
-      dark: "#967259",
-      contrastText: "#000000"
+      main: "#461261",
+      light: "#6D3F7F",
+      dark: "#2D0843",
+      contrastText: "rgba(0, 0, 0, 0.87)"
     },
     error: {
       main: red.A400,
@@ -62,7 +76,7 @@ const theme = createTheme({
   typography: {
     fontFamily: [
       'Noto Sans',
-      'Lora', 
+      'Lora',
       'Arial',
       'sans-serif'
     ].join(','),

@@ -1,11 +1,34 @@
-import { Link } from '@mui/material';
+import { Link, useTheme } from '@mui/material';
 import { Box, Container, Grid, Typography } from "@mui/material";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import XIcon from '@mui/icons-material/X';
 import YoutubeIcon from '@mui/icons-material/YouTube';
+import { grey } from '@mui/material/colors';
+
+const footerColumns = [
+    {
+        title: 'ABOUT US',
+        links: ['CinemaWorld', 'Newsletter', 'Contact']
+    },
+    {
+        title: 'INFORMATIONS',
+        links: ['Regulations', 'Privacy Policy', 'Manage cookies', 'Cookies Policy']
+    },
+    {
+        title: 'FOLLOW US',
+        links: [
+            { name: 'Facebook', icon: <FacebookIcon /> },
+            { name: 'Instagram', icon: <InstagramIcon /> },
+            { name: 'Twitter', icon: <XIcon /> },
+            { name: 'YouTube', icon: <YoutubeIcon /> }
+        ]
+    }
+];
 
 export default function Footer() {
+    const theme = useTheme();
+
     return (
         <Box
             sx={{
@@ -24,32 +47,20 @@ export default function Footer() {
                     alignItems="center"
                     style={{ height: '250px' }}>
                     <Grid item container spacing={3} direction="row" justifyContent="space-around">
-                        {/* extract to components - FooterColumn */}
-                        <Grid item xs={3} container direction="column">
-                            <Typography variant="h6" mb={1} sx={{ fontWeight: 'bold' }}>ABOUT US</Typography>
-                            <Link variant='body1' href="#" underline="hover">CinemaWorld</Link>
-                            <Link variant='body1' href="#" underline="hover">Newsletter</Link>
-                            <Link variant='body1' href="#" underline="hover">Contact</Link>
-                        </Grid>
-
-                        <Grid item xs={3} container direction="column">
-                            <Typography variant="h6" mb={1} sx={{ fontWeight: 'bold' }}>INFORMATIONS</Typography>
-                            <Link variant='body1' href="#" underline="hover">Regulations</Link>
-                            <Link variant='body1' href="#" underline="hover">Privacy Policy</Link>
-                            <Link variant='body1' href="#" underline="hover">Manage cookies</Link>
-                            <Link variant='body1' href="#" underline="hover">Cookies Policy</Link>
-                        </Grid>
-
-                        <Grid item xs={3} container direction="column">
-                            <Typography variant="h6" mb={1} sx={{ fontWeight: 'bold' }}>FOLLOW US</Typography>
-                            <Link variant='body1' href="#" underline="hover" style={{display: 'flex', alignItems: 'center' }}><FacebookIcon />Facebook</Link>
-                            <Link variant='body1' href="#" underline="hover" style={{display: 'flex', alignItems: 'center' }}><InstagramIcon />Instagram</Link>
-                            <Link variant='body1' href="#" underline="hover" style={{display: 'flex', alignItems: 'center' }}><XIcon />Twitter</Link>
-                            <Link variant='body1' href="#" underline="hover" style={{display: 'flex', alignItems: 'center' }}><YoutubeIcon />YouTube</Link>
-                        </Grid>
+                        {footerColumns.map((column, index) => (
+                            <Grid key={index} item xs={3} container direction="column">
+                                <Typography variant="h6" mb={1} sx={{ fontWeight: 'bold' }}>{column.title}</Typography>
+                                {column.links.map((link, linkIndex) => (
+                                    typeof link === 'string' ?
+                                        <Link key={linkIndex} variant='body1' href="#" underline="hover" style={{ color: theme.palette.primary.contrastText }}>{link}</Link>
+                                        :
+                                        <Link key={linkIndex} variant='body1' href="#" underline="hover" style={{ display: 'flex', alignItems: 'center', color: theme.palette.primary.contrastText }}>{link.icon}{link.name}</Link>
+                                ))}
+                            </Grid>
+                        ))}
                     </Grid>
                     <Grid item container direction="row" justifyContent="center">
-                        <Typography color="textSecondary" variant="subtitle1">
+                        <Typography color={grey[700]} variant="subtitle1">
                             All rights reserved Cinema World {new Date().getFullYear()} ©
                         </Typography>
                     </Grid>

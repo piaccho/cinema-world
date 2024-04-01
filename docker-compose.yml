@@ -71,27 +71,26 @@ services:
       - MONGODB_URI=mongodb://root:root@mongo:27017
       - MONGODB_NAME=cinema
       - PORT=8080
-      - FRONTEND_URI=http://localhost:5000
       - JWT_SECRET=yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
     networks:
       - MONGO
     volumes:
       - ./backend/:/app
 
-  # cinema-frontend:
-  #   build: ./frontend
-  #   container_name: cw-frontend
-  #   volumes:
-  #     - ./frontend:/app
-  #   depends_on:
-  #     - cinema-api
-  #   ports:
-  #     - "5000:5000"
-  #   environment:
-  #     - NODE_ENV=development
-  #     - VITE_API_URI=http://localhost:8080/api
-  #   networks:
-  #     - MONGO
+  cinema-frontend:
+    build: ./frontend
+    container_name: cw-frontend
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - cinema-api
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URI=http://localhost:8080/api
+    networks:
+      - MONGO
 
 networks:
   MONGO:

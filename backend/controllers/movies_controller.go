@@ -38,9 +38,11 @@ func GetMovies(getType string) gin.HandlerFunc {
 			// Get quantity and convert to an int64
 			quantity, err := strconv.ParseInt(c.Param("quantity"), 10, 64)
 			if err != nil {
+				c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error(), "message": "Invalid quantity"}})
+				return
+			}
+			if quantity == 0 {
 				quantity = DefaultQuantity
-				// c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid quantity"})
-				// return
 			}
 			findOptions.SetSort(bson.D{{"voteCount", -1}})
 			findOptions.SetLimit(quantity)
@@ -50,9 +52,11 @@ func GetMovies(getType string) gin.HandlerFunc {
 			// Get quantity and convert to an int64
 			quantity, err := strconv.ParseInt(c.Param("quantity"), 10, 64)
 			if err != nil {
+				c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error(), "message": "Invalid quantity"}})
+				return
+			}
+			if quantity == 0 {
 				quantity = DefaultQuantity
-				// c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid quantity"})
-				// return
 			}
 			findOptions.SetSort(bson.D{{"releaseDate", -1}})
 			findOptions.SetLimit(quantity)
@@ -60,10 +64,18 @@ func GetMovies(getType string) gin.HandlerFunc {
 			// releaseDate greater than or equal to today
 			// filter = bson.M{"releaseDate": bson.M{"$gte": time.Now().Format(time.RFC3339)}}
 
-		case "genres":
-			// Get genre name
-			genreName := c.Param("name")
+		case "genreId":
+			// Get genre id
+			genreId, err := primitive.ObjectIDFromHex(c.Param("genreId"))
+            if err != nil {
+                c.JSON(http.StatusBadRequest, models.Response{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error(), "message": "Invalid genre ID"}})
+                return
+            }
+			filter = bson.M{"genres._id": genreId}
 
+		case "genreName":
+			// Get genre name
+			genreName := c.Param("genreName")
 			filter = bson.M{"genres.name": genreName}
 
 		case "search":
@@ -78,7 +90,7 @@ func GetMovies(getType string) gin.HandlerFunc {
 		// Find all documents in the collection
 		results, err := moviesCollection.Find(ctx, filter, findOptions)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "message": "Error finding movies"}})
 			return
 		}
 
@@ -86,21 +98,21 @@ func GetMovies(getType string) gin.HandlerFunc {
 		defer func(results *mongo.Cursor, ctx context.Context) {
 			err := results.Close(ctx)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "message": "Error closing cursor"}})
 			}
 		}(results, ctx)
 
 		for results.Next(ctx) {
 			var singleMovie models.Movie
 			if err = results.Decode(&singleMovie); err != nil {
-				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "message": "Error decoding movie"}})
 			}
 
 			movies = append(movies, singleMovie)
 		}
 
 		c.JSON(http.StatusOK,
-			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": movies}},
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": movies, "message": "Movies found!"}},
 		)
 	}
 }
@@ -152,6 +164,32 @@ func GetMovieById() gin.HandlerFunc {
 
 		c.JSON(http.StatusOK,
 			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": movie}},
+		)
+	}
+}
+
+func GetMovieByTitle() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var movie models.Movie
+		defer cancel()
+
+		// Get movie title
+		movieTitle := c.Param("movieTitle")
+
+		// Find a single document
+		err := moviesCollection.FindOne(ctx, bson.M{"title": movieTitle}).Decode(&movie)
+		if err != nil {
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				c.JSON(http.StatusNotFound, models.Response{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "No movie found with the provided title"}})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Error finding movie by title"}})
+			return
+		}
+
+		c.JSON(http.StatusOK,
+			models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": movie, "description": "Movie found"}},
 		)
 	}
 }
