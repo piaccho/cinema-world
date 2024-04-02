@@ -30,7 +30,7 @@ export async function getGenresMock(): Promise<Genre[]> {
         });
 }
 
-export async function getMoviesBySearchQueryMock(query: string): Promise<Movie[]> {
+export async function getMoviesBySearchQueryMock(): Promise<Movie[]> {
     return fetch("/src/mocks/searchQueryMovies.json")
         .then(response => {
             if (!response.ok) {
@@ -40,7 +40,7 @@ export async function getMoviesBySearchQueryMock(query: string): Promise<Movie[]
         });
 }
 
-export async function getMoviesByGenreMock(genreName: string): Promise<Movie[]> {
+export async function getMoviesByGenreMock(): Promise<Movie[]> {
     return fetch("/src/mocks/actionMovies.json")
         .then(response => {
             if (!response.ok) {
@@ -50,7 +50,7 @@ export async function getMoviesByGenreMock(genreName: string): Promise<Movie[]> 
         });
 }
 
-export async function getShowingListsByDateMock(date: string): Promise<Showing[]> {
+export async function getShowingListsByDateMock(): Promise<Showing[]> {
     return fetch("/src/mocks/showings.json")
         .then(response => {
             if (!response.ok) {
@@ -60,7 +60,7 @@ export async function getShowingListsByDateMock(date: string): Promise<Showing[]
         });
 }
 
-export async function getShowingListsByMovieIdMock(movieId: number): Promise<Showing[]> {
+export async function getShowingListsByMovieIdMock(): Promise<Showing[]> {
     return fetch("/src/mocks/showingsOneMovie.json")
         .then(response => {
             if (!response.ok) {

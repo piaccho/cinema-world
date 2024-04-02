@@ -2,7 +2,9 @@
 version: '3.8'
 services:
   cinema-api:  
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: ./Dockerfile
     container_name: cw-api
     restart: unless-stopped
     ports:
@@ -12,8 +14,6 @@ services:
       - MONGODB_NAME=cinema
       - PORT=8080
       - JWT_SECRET=yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
-    networks:
-      - MONGO
     volumes:
       - ./backend/:/app
 

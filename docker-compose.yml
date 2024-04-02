@@ -57,7 +57,9 @@ services:
       - /docker-entrypoint.sh
 
   cinema-api:  
-    build: ./backend
+    build: 
+      context: ./backend
+      dockerfile: ./Dockerfile
     container_name: cw-api
     restart: unless-stopped
     depends_on:
