@@ -4,7 +4,7 @@ services:
     image: mongo:latest
     container_name: cw_mongo
     environment:
-      # change for more security
+      # change for more safety
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=root
     ports:
@@ -12,12 +12,9 @@ services:
     networks:
       - MONGO
     volumes:
-      # in production, use a volume type, uncomment sources
       - type: tmpfs
-        # source: mongo-data
         target: /data/db
       - type: tmpfs
-        # source: mongo-config
         target: /data/configdb
 
   mongo-seed:
@@ -95,13 +92,6 @@ services:
 networks:
   MONGO:
     name: MONGO
-
-#  for production use (volume type volumes in mongo service), uncomment the following volumes 
-# volumes:
-#   mongo-data:
-#     name: mongo-data
-#   mongo-config:
-#     name: mongo-config
 
   
 
