@@ -16,15 +16,6 @@ Here're some of the project's best features:
 -   **Admin Panel:** Manage movie listings, user accounts, and other resources through a dedicated admin panel.
 
 
-<div id="live-demo" />
-
-## 💻 Live demo
-
-You can test the application with live demo deployed using <i>Railway</i> at:
-
-https://cinema-world.up.railway.app/
-
-
 <div id="used-technologies" />
 
 ## ⚙️ Used technologies
