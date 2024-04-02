@@ -1,0 +1,33 @@
+# Use with MongoDB Cloud instance
+version: '3.8'
+services:
+  cinema-api:  
+    build: ./backend
+    container_name: cw-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"  
+    environment:
+      - MONGODB_URI=
+      - MONGODB_NAME=cinema
+      - PORT=8080
+      - JWT_SECRET=yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+    networks:
+      - MONGO
+    volumes:
+      - ./backend/:/app
+
+  cinema-frontend:
+    build: ./frontend
+    container_name: cw-frontend
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - cinema-api
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URI=http://localhost:8080/api
+
+
