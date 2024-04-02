@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Box, Container, Grid, Typography } from '@mui/material';
 import MovieOverviewCard from '../components/MovieOverviewCard';
 import { useLocation } from 'react-router-dom';
-import { Showing } from '../types';
+import { Showing } from '../mongoSchemas';
 import ApiService from '../ApiService';
 import MovieOverviewShowing from '../components/MovieOverviewShowing';
 import {groupShowingsByDate} from '../util/groupShowings';

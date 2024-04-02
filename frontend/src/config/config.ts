@@ -2,8 +2,8 @@ export const API = {
 
     DEFAULT_ENTRIES_NUMBER: 20,
     // AUTH
-    LOGIN: "/auth/login",
-    REGISTER: "/auth/register",
+    LOGIN: "/auth/signIn",
+    REGISTER: "/auth/signUp",
 
     // GENRES 
     CRUD_GENRES: "/genres/",

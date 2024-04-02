@@ -1,5 +1,4 @@
 import { Card, CardContent, Typography, Button, Box, CardMedia } from '@mui/material';
-import { MovieOverviewCardProps } from '../types';
 import StarIcon from '@mui/icons-material/Star';
 import TodayIcon from '@mui/icons-material/Today';
 import ScheduleIcon from '@mui/icons-material/Schedule';
@@ -9,8 +8,12 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { Movie } from '../mongoSchemas';
 
-
+interface MovieOverviewCardProps {
+    movie: Movie;
+    onButtonClick: () => void;
+}
 
 const MovieOverviewCard: React.FC<MovieOverviewCardProps> = ({ movie, onButtonClick }) => {
     return (

@@ -144,7 +144,7 @@ func UpdateShowing() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"movie_id": showing.MovieShowingRef, "hall": showing.Hall, "start_time": showing.StartTime, "end_time": showing.EndTime, "available_seats": showing.AvailableSeats, "booked_seats": showing.BookedSeats, "price_per_ticket": showing.PricePerTicket, "audio_type": showing.AudioType, "video_type": showing.VideoType}
+		update := bson.M{"movie": showing.MovieShowingRef, "hall": showing.Hall, "startTime": showing.StartTime, "endTime": showing.EndTime, "availableSeats": showing.AvailableSeats, "bookedSeats": showing.BookedSeats, "pricePerTicket": showing.PricePerTicket, "audioType": showing.AudioType, "videoType": showing.VideoType}
 		result, err := showingCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -250,7 +250,8 @@ func GetShowingsByDate() gin.HandlerFunc {
 
 		startOfDay := time.Date(datetime.Year(), datetime.Month(), datetime.Day(), 0, 0, 0, 0, datetime.Location())
 		endOfDay := startOfDay.Add(24 * time.Hour)
-		filter := bson.M{"start_time": bson.M{"$gte": startOfDay, "$lt": endOfDay}}
+		fmt.Println("Start of day:", startOfDay, "End of day:", endOfDay)
+		filter := bson.M{"startTime": bson.M{"$gte": startOfDay, "$lt": endOfDay}}
 
 		cursor, err := showingCollection.Find(ctx, filter)
 		if err != nil {
@@ -274,6 +275,7 @@ func GetShowingsByDate() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Failed to decode showings"}})
 			return
 		}
+		
 
 		c.JSON(http.StatusOK, models.Response{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"info": "Fetched " + strconv.Itoa(len(showings)) + " showings documents", "data": showings}})
 	}

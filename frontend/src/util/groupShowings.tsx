@@ -1,10 +1,20 @@
-import { DateGroupedShowings, MovieIdGroupedShowings, Showing } from "../types";
+import { Showing } from "../mongoSchemas";
+
+type MovieIdGroupedShowings = {
+    movieId: string;
+    showings: Showing[];
+};
+
+type DateGroupedShowings = {
+    date: string;
+    showings: Showing[];
+};
 
 export function groupShowingsByDate(showings: Showing[]): DateGroupedShowings[] {
     const grouped: { [key: string]: Showing[] } = {};
 
     for (const showing of showings) {
-        const date = showing.datetime.toString().split('T')[0];
+        const date = showing.startTime.toString().split('T')[0];
         if (!grouped[date]) {
             grouped[date] = [];
         }
@@ -21,7 +31,7 @@ export function groupShowingsByMovie(showings: Showing[]): MovieIdGroupedShowing
     const grouped: { [key: string]: Showing[] } = {};
 
     for (const showing of showings) {
-        const movieId = showing.movie.movieId;
+        const movieId = showing.movie._id;
         if (!grouped[movieId]) {
             grouped[movieId] = [];
         }

@@ -9,7 +9,7 @@ const Layout: React.FC = () => {
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
-            minHeight: '100vh'
+            minHeight: '100vh',
         }}>
             <Header />
             <Box sx={{ flex: '1' }}>

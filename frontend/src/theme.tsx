@@ -2,6 +2,7 @@ import { PaletteMode } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { orange, red, grey, green } from '@mui/material/colors';
 
+// For Dark/Light mode
 const getDesignTokens = (mode: PaletteMode) => ({
   palette: {
     mode,

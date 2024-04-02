@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Button, Container, Box, CircularProgress } from '@mui/material';
-import { Genre } from '../types';
+import { Typography, Button, Container, Box, CircularProgress, Grow, useTheme } from '@mui/material';
+import { Genre } from '../mongoSchemas';
 import ApiService from '../ApiService';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store';
 
 const ChooseGenrePage: React.FC = () => {
+    const theme = useTheme();
     const [genres, setGenres] = useState<Genre[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -13,7 +14,6 @@ const ChooseGenrePage: React.FC = () => {
 
     const setGenreId = useStore((state) => state.setGenreId);
     const setGenreName = useStore((state) => state.setGenreName);
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,7 +38,7 @@ const ChooseGenrePage: React.FC = () => {
     return (
         <Container
             component="main"
-            sx={{ backgroundColor: 'primary.main', color: 'primary.contrastText' }}
+            sx={{ color: theme.palette.primary.light}}
         >
             <Box
                 my={5}
@@ -48,26 +48,27 @@ const ChooseGenrePage: React.FC = () => {
                     alignItems: 'center',
                 }}
             >
-                <Typography variant="h4" my={3} sx={{ fontWeight: 'bold' }}>
+                <Typography variant="h4" mb={4} sx={{ fontWeight: 'bold' }}>
                     Choose a Genre
                 </Typography>
                 {loading ? (
-                    <CircularProgress color='info'/>
+                    <CircularProgress color='info' />
                 ) : error ? (
                     <div>Error: {error}</div>
                 ) : (
                     genres.map((genre, index) => (
-                        <Button
-                            key={index}
-                            component={Link}
-                            to={`/movies/genres/${genre.name}`}
-                            onClick={() => { setGenreId(genre._id); setGenreName(genre.name) }}
-                            variant="contained"
-                            color="primary"
-                            sx={{ width: '100%' }}
-                        >
-                            {genre.name}
-                        </Button>
+                        <Grow in={true} key={index} timeout={1000}>
+                            <Button
+                                component={Link}
+                                to={`/movies/genres/${genre.name}`}
+                                onClick={() => { setGenreId(genre._id); setGenreName(genre.name) }}
+                                variant="contained"
+                                color="primary"
+                                sx={{ width: '40%', mb:2, height: '50px', fontSize: '1.2rem', fontWeight: 'bold'}}
+                            >
+                                {genre.name}
+                            </Button>
+                        </Grow>
                     ))
                 )}
             </Box>

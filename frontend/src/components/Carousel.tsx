@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Slide, Box, Stack, IconButton } from "@mui/material";
-import { CarouselProps } from "../types";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+
+interface CarouselProps {
+    elements: React.ReactElement[];
+}
 
 const Carousel: React.FC<CarouselProps> = ({ elements }) => {
     const [currentPage, setCurrentPage] = useState(0);

@@ -10,7 +10,8 @@ import RepertoirePage from "./pages/RepertoirePage";
 import TestPage from "./pages/TestPage";
 
 import React from "react";
-import { Routes, Route, } from "react-router-dom";
+import { Routes, Route, Navigate, } from "react-router-dom";
+import dayjs from 'dayjs';
 
 
 const App: React.FC = () => {
@@ -37,11 +38,11 @@ const App: React.FC = () => {
         <Route path="sign-in" element={<SignInPage />} />
         <Route path="sign-up" element={<SignUpPage />} />
         <Route path="movies/:id" element={<MovieOverviewPage />} />
-        <Route path="genres" element={<ChooseGenrePage />} />
-        <Route path="repertoires" element={<RepertoirePage />} />
+        <Route path="movies/genres" element={<ChooseGenrePage />} />
+        <Route path="repertoires/date/" element={<Navigate to={`${dayjs().format('YYYY-MM-DD')}`}/>} />
         <Route path="repertoires/date/:date" element={<RepertoirePage />} />
-        <Route path="movies/genres/:name" element={<MoviesResultsPage type="genre" />} />
-        <Route path="movies/search/:q" element={<MoviesResultsPage type="searchQuery" />} />
+        <Route path="movies/genres/:genreName" element={<MoviesResultsPage />} />
+        <Route path="movies/search/:searchQuery" element={<MoviesResultsPage />} />
         <Route path="*" element={<NoMatchPage />} />
       </Route>
     </Routes>

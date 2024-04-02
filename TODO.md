@@ -1,4 +1,17 @@
+Oto mój komponent wyświetlania repertuarów. Komponent ma za zadanie wyświetlać repertuary. Date można wybrać z DatePicker. Routing komponentu wygląda tak - "<Route path="repertoires/date/:date" element={<RepertoirePage />} />"
+Chce aby po wybraniu daty z DatePicker, przekierowywuje nas na "repertoires/date/<wybrana_data>
+Data jest postaci  "YYYY-MM-DD"
+
+- mui component
+	- Avatar
+	- Rating
+	- 
+
 ## TODO: GENERAL 
+- part showing info bar into 4 flexes 
+- unmount TestPage from router
+- solve height of footer
+- better carousel (react-slick)
 - solve spacer in hearder
 - lazy loading, loading spinners
 - change docker-compose db credentials for better security
@@ -7,6 +20,7 @@
 - Railway/Vercel deployment
 - README.md with overview and demo
 - change mongo tmpfs (stored in memory then permanently deleted) volume type to some lasting volume type
+- customize light/dark mode theme according to `Default colors` and `Adding color tokens - TypeScript` of [docs](https://mui.com/material-ui/customization/palette/)
 
 ### TODO: FRONTEND
 - Fix width of carousels
@@ -37,6 +51,7 @@
     
 
 ### Minor fixes and features:
+- [ ] FE: unify way of returning data from API call (whole response vs data only)
 - [ ] BE: HTTP Caching (c.Header("Cache-Control", "public, max-age=3600") / c.Header("ETag", computeETag(data))) / for very dynamic data use Redis
 - [ ] BE: validate showingId, userId and movieRef in reservations method
 - [ ] BE: extract generic method like: GetAll, GetByKeyID,

@@ -1,5 +1,4 @@
-// mockApiService.tsx
-import { Genre, Movie, Showing } from '../types';
+import { Genre, Movie, Showing } from './mongoSchemas';
 
 export async function getPopularMoviesMock(): Promise<Movie[]> {
     return fetch("src/mocks/popularMovies.json")

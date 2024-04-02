@@ -6,6 +6,6 @@ import (
 )
 
 func AuthRoute(router *gin.RouterGroup) {
-	router.POST("/login", controllers.LoginUser())
-	router.POST("/register", controllers.RegisterUser())
+	router.POST("/signIn", controllers.LoginUser())
+	router.POST("/signUp", controllers.RegisterUser())
 }

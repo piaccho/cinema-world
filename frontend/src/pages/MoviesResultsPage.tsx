@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Grid, Typography, CircularProgress } from '@mui/material';
-import { Movie, MoviesListPageProps } from '../types';
+import { Box, Container, Grid, Typography, CircularProgress, Zoom } from '@mui/material';
+import { Movie } from '../mongoSchemas';
 import ApiService from '../ApiService';
 import MovieItem from '../components/MovieItem';
 import capitalizeLetter from '../util/capitalLetter';
-import { useStore } from '../store';
 import { useParams } from 'react-router-dom';
 
 interface MovieResultsHeaderProps {
-    type: string;
     moviesLength: number;
     searchQuery: string | null;
     genreName: string | null;
 }
 
-const MovieResultsHeader: React.FC<MovieResultsHeaderProps> = ({ type, moviesLength, searchQuery, genreName }) => {
+const MovieResultsHeader: React.FC<MovieResultsHeaderProps> = ({ moviesLength, searchQuery, genreName }) => {
     return (
         <Box mb={4} display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                 {
-                    type === 'searchQuery' ?
+                    searchQuery ?
                         <>
-                            Search results for: <Box component="span" sx={{ color: 'secondary.dark' }}>{searchQuery}</Box>
+                            Search results for: <Box component="span" sx={{ color: 'primary.light' }}>"{searchQuery}"</Box>
                         </>
-                        : genreName ?
-                            `${capitalizeLetter(genreName)} movies:`
-                            : ''
+                    : genreName ?
+                        `${capitalizeLetter(genreName)} movies:`
+                        : ''
                 }
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.light' }}>
@@ -43,37 +41,33 @@ const MovieResultsGrid: React.FC<MovieResultsGridProps> = ({ movies }) => {
     return (
         <Grid container spacing={4}>
             {movies.map((movie, index) => (
-                <Grid item key={index} xs={12} sm={5} md={3}>
-                    <MovieItem movie={movie} />
-                </Grid>
+                <Zoom in={true} key={index} timeout={500 + (50 * index)}>
+                    <Grid item xs={12} sm={5} md={3}>
+                        <MovieItem movie={movie} />
+                    </Grid>
+                </Zoom>
             ))}
         </Grid>
     );
 }
 
-const MoviesResultsPage: React.FC<MoviesListPageProps> = ({ type }) => {
+const MoviesResultsPage: React.FC = () => {
     const [movies, setMovies] = useState<Movie[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const apiService = new ApiService();
 
-    // const { genreName, searchQuery } = useParams();
-    const genreId = useStore((state) => state.genreId);
-    const genreName = useStore((state) => state.genreName);
-    const searchQuery = useStore((state) => state.searchQuery);
-
+    const { genreName, searchQuery } = useParams();
 
     useEffect(() => {
         const fetchMovies = async () => {
-            console.log(`searchQuery, genreId, genreName: ${searchQuery}, ${genreId}, ${genreName}`);
+            console.log(`searchQuery, genreName: ${searchQuery}, ${genreName}`);
             setLoading(true);
             try {
-                if (type === 'searchQuery' && searchQuery !== null) {
+                if (searchQuery) {
                     setMovies(await apiService.getMoviesBySearchQuery(searchQuery ?? ''));
-                } else if (type === 'genre' && genreName !== null) {
+                } else if (genreName) {
                     setMovies(await apiService.getMoviesByGenreName(genreName ?? ''));
-                // } else if (type === 'genre' && genreId !== null) {
-                // setMovies(await apiService.getMoviesByGenreId(genreId));
                 } else {
                     setError('Invalid type or missing search query or genre id');
                 }
@@ -95,7 +89,7 @@ const MoviesResultsPage: React.FC<MoviesListPageProps> = ({ type }) => {
                     <div>Error: {error}</div>
                 ) : (
                     <>
-                        <MovieResultsHeader type={type} moviesLength={movies.length} searchQuery={searchQuery} genreName={genreName} />
+                        <MovieResultsHeader moviesLength={movies.length} searchQuery={searchQuery ?? null} genreName={genreName ?? null} />
                         <MovieResultsGrid movies={movies} />
                     </>
                 )}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CircularProgress, Container, Typography } from '@mui/material';
-import { Movie } from '../types';
+import { Movie } from '../mongoSchemas';
 import ApiService from '../ApiService';
 import Carousel from '../components/Carousel';
 import MovieItem from '../components/MovieItem';
@@ -54,8 +54,10 @@ const HomePage: React.FC = () => {
     }, []);
 
     return (
-        <Container maxWidth="xs" sx={{ padding: 5, display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            {/* extract to components - CarouselSection */}
+        <Container 
+            maxWidth="xs" 
+            sx={{ padding: 5, display: 'flex', flexDirection: 'column', alignItems: 'center'}}
+        >
             <Typography 
                 variant="h5" 
                 color="initial" 

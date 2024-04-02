@@ -4,7 +4,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import { useNavigate } from 'react-router-dom';
 import { Box, IconButton } from '@mui/material';
-import { useStore } from '../store';
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -40,24 +39,22 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const SearchBar: React.FC = () => {
     const [inputSearchQuery, setInputSearchQuery] = useState<string | null>('');
-    const searchQuery = useStore((state) => state.searchQuery);
-    const setSearchQuery = useStore((state) => state.setSearchQuery);
     const navigate = useNavigate();
 
     const action = () => {
-        if (inputSearchQuery !== null) {
-            setSearchQuery(inputSearchQuery);
-            navigate(`/movies/search/${searchQuery}`);
+        if (inputSearchQuery !== '' && inputSearchQuery !== null) {
+            setInputSearchQuery(inputSearchQuery);
+            navigate(`/movies/search/${inputSearchQuery}`);
         }
     }
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter' && searchQuery !== null) {
+        if (event.key === 'Enter' && inputSearchQuery !== null) {
            action();
         }
     };
     const handleClick = () => {
-        if (searchQuery !== '') {
+        if (inputSearchQuery !== '' && inputSearchQuery !== null) {
            action();
         }
     };

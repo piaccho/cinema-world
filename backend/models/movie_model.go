@@ -23,9 +23,11 @@ type Movie struct {
 }
 
 type MovieRef struct {
-	Id     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	Genres []Genre            `json:"genres" bson:"genres" binding:"required"`
-	Image  string             `json:"image" bson:"image" binding:"required"`
-	Length int                `json:"length" bson:"length" binding:"required"`
-	Title  string             `json:"title" bson:"title" binding:"required"`
+	Id     				primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	Adult  				bool           	  `json:"adult" bson:"adult" binding:"required"`
+	Genres 				[]Genre            `json:"genres" bson:"genres" binding:"required"`
+	Image  				string             `json:"image" bson:"image" binding:"required"`
+	Length 				int                `json:"length" bson:"length" binding:"required"`
+	OriginalLanguage 	string   `json:"originalLanguage" bson:"originalLanguage" binding:"required"`
+	Title  				string             `json:"title" bson:"title" binding:"required"`
 }

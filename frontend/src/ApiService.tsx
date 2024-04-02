@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { API } from './config/config';
-import { Genre, Movie, Showing } from './types';
+import { Genre, Movie, Showing } from './mongoSchemas';
 
 type ApiResponse = {
     status: number;
@@ -90,5 +90,19 @@ export default class ApiService {
         const response = await this.api.get<ApiResponse>(URL);
         console.log(`GET ${URL}`, response.data);
         return response.data.data.data || [];
+    }
+
+    async login(email: string, password: string): Promise<ApiResponse> {
+        const URL = `${API.LOGIN}`;
+        const response = await this.api.post<ApiResponse>(URL, { email, password });
+        console.log(`POST ${URL}`, response.data);
+        return response.data;
+    }
+
+    async register(firstName: string, lastName: string, email: string, password: string): Promise<ApiResponse> {
+        const URL = `${API.REGISTER}`;
+        const response = await this.api.post<ApiResponse>(URL, { firstName, lastName, email, password });
+        console.log(`POST ${URL}`, response.data);
+        return response.data;
     }
 }

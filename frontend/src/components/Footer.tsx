@@ -45,22 +45,35 @@ export default function Footer() {
                     direction="column"
                     justifyContent="space-between"
                     alignItems="center"
-                    style={{ height: '250px' }}>
+                    style={{ height: '250px' }}
+                    mt={2}
+                >
                     <Grid item container spacing={3} direction="row" justifyContent="space-around">
                         {footerColumns.map((column, index) => (
                             <Grid key={index} item xs={3} container direction="column">
-                                <Typography variant="h6" mb={1} sx={{ fontWeight: 'bold' }}>{column.title}</Typography>
+                                <Typography variant="h6" mb={2} sx={{ fontWeight: 'bold', color: grey[50] }}>{column.title}</Typography>
                                 {column.links.map((link, linkIndex) => (
                                     typeof link === 'string' ?
-                                        <Link key={linkIndex} variant='body1' href="#" underline="hover" style={{ color: theme.palette.primary.contrastText }}>{link}</Link>
+                                        <Link key={linkIndex} variant='body1' href="#" underline="hover" style={{ color: grey[300] }}>
+                                            <Typography variant="subtitle2" mb={1}>
+                                                {link}
+
+                                            </Typography>
+
+                                        </Link>
                                         :
-                                        <Link key={linkIndex} variant='body1' href="#" underline="hover" style={{ display: 'flex', alignItems: 'center', color: theme.palette.primary.contrastText }}>{link.icon}{link.name}</Link>
+                                        <Link key={linkIndex} variant='body1' href="#" underline="hover" style={{ display: 'flex', alignItems: 'center', color: grey[300] }}>
+                                            <Typography variant="subtitle2" mb={1} sx={{ display: 'flex', color: grey[50] }}>
+                                                {link.icon}<Box marginLeft={1}>{link.name}</Box>
+                                            </Typography>
+                                            
+                                        </Link>
                                 ))}
                             </Grid>
                         ))}
                     </Grid>
                     <Grid item container direction="row" justifyContent="center">
-                        <Typography color={grey[700]} variant="subtitle1">
+                        <Typography color={grey[500]} variant="subtitle2">
                             All rights reserved Cinema World {new Date().getFullYear()} ©
                         </Typography>
                     </Grid>

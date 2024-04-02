@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"errors"
 	"net/http"
 	"piaccho/cinema-api/configs"
 	"piaccho/cinema-api/models"
@@ -62,7 +63,7 @@ func RegisterUser() gin.HandlerFunc {
 		userCollection := configs.GetCollection("users")
 		err := userCollection.FindOne(context.TODO(), bson.M{"email": req.Email}).Decode(&user)
 		if err == nil {
-			c.JSON(http.StatusConflict, models.Response{Status: http.StatusConflict, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "User already exists"}})
+			c.JSON(http.StatusConflict, models.Response{Status: http.StatusConflict, Message: "error", Data: map[string]interface{}{"data": errors.New("Conflict"), "description": "User already exists"}})
 			return
 		}
 
@@ -83,7 +84,7 @@ func RegisterUser() gin.HandlerFunc {
 		}
 		_, err = userCollection.InsertOne(context.TODO(), newUser)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error(), "description": "Error while creating the user"}})
+			c.JSON(http.StatusInternalServerError, models.Response{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": errors.New("Error while creating the user"), "description": "Error while creating the user"}})
 			return
 		}
 

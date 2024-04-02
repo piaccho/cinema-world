@@ -289,9 +289,11 @@ func GetMoviesRefs() gin.HandlerFunc {
 
 			movies = append(movies, models.MovieRef{
 				Id:     singleMovie.Id,
+				Adult:  singleMovie.Adult,
 				Genres: singleMovie.Genres,
 				Title:  singleMovie.Title,
 				Image:  singleMovie.Image,
+				OriginalLanguage: singleMovie.OriginalLanguage,
 				Length: singleMovie.Length,
 			})
 		}

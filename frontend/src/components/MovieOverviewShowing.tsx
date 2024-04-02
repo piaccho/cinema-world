@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { Box, Button, Card, CardContent, Grid } from '@mui/material';
-import { Showing } from '../types';
+import { Showing } from '../mongoSchemas';
 import formatDate from '../util/formatDate';
 import getTimeFromDate from '../util/getTimeFromDate';
 
