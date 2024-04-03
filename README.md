@@ -23,7 +23,7 @@ Here're some of the project's best features:
 
 ## 💻 Demo
 
-Showcase of functionalities:
+Showcase of some functionalities:
 
 https://github.com/piaccho/cinema-world/assets/86687829/b7029212-0afb-4f40-a297-9d3296bdf78e
 
