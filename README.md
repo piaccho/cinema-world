@@ -1,7 +1,11 @@
 <h1 align="center" id="title">Cinema World 🎬</h1>
 
+<div id="overview" />
+  
 ## 🔎 Overview  
 <p id="description">"Cinema World" is a comprehensive full-stack web application tailored for cinema management. It serves as a centralized platform for users to explore movie offerings, check repertoires, create accounts, book tickets, and provide reviews for movies. With a user-friendly interface and a suite of features, it aims to enhance the movie-going experience for both casual viewers and cinema enthusiasts.</p>
+
+<div id="features" />
 
 ## ✨ Features 
 
@@ -15,6 +19,13 @@ Here're some of the project's best features:
 -   **Movie Reviews:** You can express your opinion about the film by leaving a rating and review.
 -   **Admin Panel:** Manage movie listings, user accounts, and other resources through a dedicated admin panel.
 
+<div id="demo" />
+
+## 💻 Demo
+
+Showcase of functionalities:
+
+https://github.com/piaccho/cinema-world/assets/86687829/b7029212-0afb-4f40-a297-9d3296bdf78e
 
 <div id="used-technologies" />
 
