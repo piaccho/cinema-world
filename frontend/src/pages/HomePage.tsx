@@ -27,7 +27,7 @@ const HomePage: React.FC = () => {
                     setErrorPopular('Invalid data format');
                 }
             } catch (err) {
-                setErrorPopular('Failed to fetch genres');
+                setErrorPopular('Failed to fetch popular movies');
             } finally {
                 setLoadingPopular(false);
             }
@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
                     setErrorUpcoming('Invalid data format');
                 }
             } catch (err) {
-                setErrorUpcoming('Failed to fetch genres');
+                setErrorUpcoming('Failed to fetch upcoming movies');
             } finally {
                 setLoadingUpcoming(false);
             }
