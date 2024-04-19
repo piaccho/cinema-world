@@ -3,7 +3,7 @@
 <div id="overview" />
   
 ## 🔎 Overview  
-<p id="description">"Cinema World" is a comprehensive full-stack web application tailored for cinema management. It serves as a centralized platform for users to explore movie offerings, check repertoires, create accounts, book tickets, and provide reviews for movies. With a user-friendly interface and a suite of features, it aims to enhance the movie-going experience for both casual viewers and cinema enthusiasts.</p>
+<p id="description">"Cinema World" is a comprehensive full-stack web application tailored for cinema management. With a user-friendly interface and a suite of features, it aims to enhance the movie-going experience for both casual viewers and cinema enthusiasts.</p>
 
 <div id="features" />
 
@@ -14,10 +14,6 @@ Here're some of the project's best features:
 -   **Movie Browsing:** Explore a diverse collection of movies with intuitive navigation like a carousel, and genre selection, and a search bar.
 -   **Movie Details:** Access comprehensive movie information and details including plot summaries, duration, languages, and trailers.
 -   **Repertoires Viewing:** You can view showing schedules for each movie, which include details like time, price, available seats, and the type of showing.
--   **User Registration:** Authentication and registration as a new user allow you to unlock more features.
--   **Ticket Booking:** Book tickets for desired movies and decide which places you prefer.
--   **Movie Reviews:** You can express your opinion about the film by leaving a rating and review.
--   **Admin Panel:** Manage movie listings, user accounts, and other resources through a dedicated admin panel.
 
 <div id="demo" />
 
